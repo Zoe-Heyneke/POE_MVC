@@ -1,11 +1,10 @@
 ﻿namespace POE_Claim_System.Models
 {
-    public class Claim
+    public class Course
     {
         public int Id { get; set; }
-        //foreign keys courseid, personid
-        public decimal totalHours { get; set; }
-        public decimal rate { get; set; }
+        public string courseCode { get; set; }
+        public int group {  get; set; }
         public DateOnly startDate { get; set; }
         public DateOnly endDate { get; set; }
         public DateTime timestamp { get; set; }
