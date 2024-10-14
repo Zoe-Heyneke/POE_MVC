@@ -54,8 +54,12 @@ namespace POE_Claim_System.Services
         public List<ClaimService> GetAllClaimsForUser(int personId)
         {
             //search on db and return user claims
+            //look for claim
+            //create select statement
+            var claims = claimsContext.Claims.Where(x => x.PersonId).ToList();
 
-            return new List<ClaimService>();
+            //return new List<ClaimService>();
+            return claims.OrderByDescending(x =>  x.DateClaimed).Thenby(x => x.StatusId).ToList();
         }
 
     }
