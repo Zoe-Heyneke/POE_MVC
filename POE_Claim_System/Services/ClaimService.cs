@@ -1,13 +1,22 @@
-﻿namespace POE_Claim_System.Services
-{
-    public class ClaimService
-    {
-        public ClaimService() { }
+﻿using Microsoft.AspNetCore.Mvc.ViewFeatures;
+using POE_Claim_System.Models;
 
+namespace POE_Claim_System.Services
+{
+    //declare context to be accessible
+    ClaimsContext claimsContext;
+    public class ClaimService()
+    {
+        public ClaimService()
+        {
+            claimsContext = new ClaimsContext();
+        }
+           
         public int AddNewClaim(ClaimService claim)
         {
             //logic to add to claim to db
-
+            ClaimsContext.Claims.Add(claim);
+            ClaimsContext.SaveChanges();
             return claim.Id;
         }
 
