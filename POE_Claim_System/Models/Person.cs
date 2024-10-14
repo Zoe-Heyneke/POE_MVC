@@ -11,5 +11,8 @@
         public string staffNumber { get; set; }
 
         public DateTime timestamp { get; set; }
+
+        //link to claim
+        public virtual ICollection<Claim> Claims { get; set; }
     }
 }
