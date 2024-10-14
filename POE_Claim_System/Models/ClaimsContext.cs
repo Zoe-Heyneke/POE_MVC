@@ -12,9 +12,11 @@ namespace POE_Claim_System.Models
 
         public DbSet<Course> Courses { get; set; }
 
-        public DbSet<ClaimStatus> ClaimsStatus { get; set; }
+        public DbSet<ClaimStatus> ClaimStatuses { get; set; }
 
         public DbSet<Document> Documents { get; set; }
+
+        public DbSet<Rate> Rates { get; set; }
 
         //when configuring
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)

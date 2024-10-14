@@ -15,11 +15,22 @@ namespace POE_Claim_System.Services
         public int AddNewClaim(ClaimService claim)
         {
             //logic to add to claim to db
-            double totalFee = claim.TotalHours * claim.Rate;
-            claim.TotalFee = totalFee;
-            claimsContext.Claims.Add(claim);
-            claimsContext.SaveChanges();
-            return claim.Id;
+
+            //how to get rate defined by lecturer to databse
+            var rate = claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
+            if (rate != null)
+            {
+                //attach claim
+                claim.Rate = rate.HourlyRate;
+
+                //exception if record not found
+                double totalFee = claim.TotalHours * claim.Rate;
+                claim.TotalFee = totalFee;
+                claimsContext.Claims.Add(claim);
+                claimsContext.SaveChanges();
+                return claim.Id;
+            }
+            return 0;
         }
 
         public int UpdateClaim(Claim claim)
