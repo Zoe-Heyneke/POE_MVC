@@ -4,11 +4,13 @@
     {
         public int Id { get; set; }
         //foreign keys courseid, personid
-        public decimal totalHours { get; set; }
-        public decimal rate { get; set; }
-        public DateOnly startDate { get; set; }
-        public DateOnly endDate { get; set; }
-        public DateTime timestamp { get; set; }
+        public int TotalHours { get; set; }
+        public double Rate { get; set; }
+
+        public double TotalFee { get; set; }    
+        public DateOnly StartDate { get; set; }
+        public DateOnly EndDate { get; set; }
+        public DateTime Timestamp { get; set; }
 
         public int PersonId { get; set; }
 
