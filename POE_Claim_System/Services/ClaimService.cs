@@ -15,7 +15,8 @@ namespace POE_Claim_System.Services
         public int AddNewClaim(ClaimService claim)
         {
             //logic to add to claim to db
-            double totalFee = claim
+            double totalFee = claim.TotalHours * claim.Rate;
+            claim.TotalFee = totalFee;
             claimsContext.Claims.Add(claim);
             claimsContext.SaveChanges();
             return claim.Id;
@@ -28,6 +29,8 @@ namespace POE_Claim_System.Services
             var _claim = claimsContext.Claims.FIrstOrDefault(x => x.Id == claim.Id);
             if(_claim != null)
             {
+                double totalFee = claim.TotalHours * claim.Rate;
+                _claim.TotalFee = totalFee;
                 _claim.DateClaimed = claim.DateClaimed;
                 _claim.ClassId = claim.ClassId;
                 _claim.StatusId = claim.StatusId;
