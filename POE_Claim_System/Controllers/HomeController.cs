@@ -6,27 +6,46 @@ namespace POE_Claim_System.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
-
+        [HttpGet]
         public IActionResult Index()
         {
             return View();
         }
 
-        public IActionResult Privacy()
+        [HttpPost]
+        public IActionResult SignUp(Person person)
         {
-            return View();
+            // Add logic to save the person details to the database
+
+            // Redirect based on the role
+            if (person.Role == "Lecturer")
+            {
+                return RedirectToAction("Index", "Lecturer");
+            }
+            else if (person.Role == "Coordinator" || person.Role == "Manager")
+            {
+                return RedirectToAction("Index", "CoordinatorManager");
+            }
+
+            return View("Index"); // Fallback if needed
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        [HttpPost]
+        public IActionResult LogIn(string username, string password, string role)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            // Validate user credentials
+
+            // Redirect based on the role
+            if (role == "Lecturer")
+            {
+                return RedirectToAction("Index", "Lecturer");
+            }
+            else if (role == "Coordinator" || role == "Manager")
+            {
+                return RedirectToAction("Index", "CoordinatorManager");
+            }
+
+            return View("Index"); // Fallback if needed
         }
     }
 }
