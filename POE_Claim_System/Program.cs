@@ -5,7 +5,7 @@ using POE_Claim_System.Services; // Add this if ClaimService is in the Services 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add ClaimContext with a connection string (ensure it's set in appsettings.json)
-builder.Services.AddDbContext<ClaimContext>(options =>
+builder.Services.AddDbContext<ClaimsContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
 
 // Register the ClaimService for Dependency Injection

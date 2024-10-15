@@ -7,9 +7,9 @@ namespace POE_Claim_System.Controllers
     {
         private readonly ClaimService _claimService;
 
-        public CoordinatorController()
+        public CoordinatorController(ClaimService claimService)
         {
-            _claimService = new ClaimService();
+            _claimService = new claimService();
         }
 
         public IActionResult ReviewClaims()

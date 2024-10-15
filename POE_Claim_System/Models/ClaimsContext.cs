@@ -23,7 +23,7 @@ namespace POE_Claim_System.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //connection string
-            optionsBuilder.UseMySQL("server=localhost;database=Claims;user=root;password=password");
+            optionsBuilder.UseMySQL("server=localhost;database=Claims_DB;user=root;password=");
         }
 
 
@@ -41,7 +41,7 @@ namespace POE_Claim_System.Models
                 entity.HasKey(c => c.Id);
                 entity.HasOne(c => c.Person).WithMany(p => p.Claims).HasForeignKey(c => c.PersonId);
 
-                entity.HasOne(c => c.Course).WithMay().HasForeignKey(c => c.CourseId);
+                entity.HasOne(c => c.Course).WithMany().HasForeignKey(c => c.CourseId);
             });
 
             modelBuilder.Entity<Course>().HasKey(c => c.Id);
