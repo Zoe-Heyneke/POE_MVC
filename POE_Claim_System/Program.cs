@@ -1,9 +1,18 @@
+using POE_Claim_System.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-builder.Services.AddControllersWithViews();
+// Add ClaimContext with a connection string
+builder.Services.AddDbContext<ClaimContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
+
+// Register the ClaimService
+builder.Services.AddScoped<ClaimService>();
 
 var app = builder.Build();
+
+// Configure the HTTP request pipeline.
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
