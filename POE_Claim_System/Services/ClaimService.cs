@@ -1,19 +1,20 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿//using Microsoft.AspNetCore.Mvc;
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
+using System.Collections.Generic;
 using System.IO; // Add for working with file streams
-using Microsoft.AspNetCore.Http; // For IFormFile interface
+//using Microsoft.AspNetCore.Http; // For IFormFile interface
 
-namespace POE_Claim_System.Controllers
+namespace POE_Claim_System.Services
 {
-    public class LecturerController : Controller
+    public class ClaimService
     {
         private readonly ClaimService _claimService; // Injected service
 
         // Constructor injection
-        public LecturerController(ClaimService claimService)
+        public ClaimService(ClaimsContext claimsContext)
         {
-            _claimService = claimService; // Assign injected service
+            _claimsContext = claimsContext; // Use dependency injection for the context
         }
 
         public IActionResult Index()
@@ -22,65 +23,48 @@ namespace POE_Claim_System.Controllers
             return View(claims);
         }
 
-        [HttpPost]
-        public IActionResult SubmitClaim(Claim claim, IFormFile document)
+        public int AddNewClaim(Claim claim)
         {
-            if (ModelState.IsValid)
+            var rate = _claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
+            if (rate != null)
             {
-                // Save the document to the server
-                if (document != null && document.Length > 0)
-                {
-                    // Define the upload directory path within wwwroot/uploads
-                    var uploadDir = Path.Combine("wwwroot", "uploads");
-
-                    // Ensure the directory exists, if not, create it
-                    if (!Directory.Exists(uploadDir))
-                    {
-                        Directory.CreateDirectory(uploadDir);
-                    }
-
-                    // Create a unique file name to avoid overwriting existing files
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(document.FileName);
-                    var filePath = Path.Combine(uploadDir, uniqueFileName);
-
-                    // Save the document to the specified file path
-                    using (var stream = new FileStream(filePath, FileMode.Create))
-                    {
-                        document.CopyTo(stream);
-                    }
-
-                    // Save the relative file path (starting after wwwroot) in the claim
-                    claim.DocumentPath = Path.Combine("uploads", uniqueFileName);
-                }
-
-                // Add the claim to the service (or database)
-                _claimService.AddNewClaim(claim); // Use injected service
-
-                // Redirect back to the Index page after successful submission
-                return RedirectToAction("Index");
+                claim.Rate = rate.HourlyRate;
+                double totalFee = claim.TotalHours * claim.Rate;
+                claim.TotalFee = totalFee;
+                _claimsContext.Claims.Add(claim);
+                _claimsContext.SaveChanges();
+                return claim.Id;
             }
-
-            // If validation fails, return the same view with the model
-            return View(claim);
+            return 0;
         }
 
-        // GET method to display the SubmitClaim form with available courses
-        public IActionResult SubmitClaim()
+        public List<Claim> GetAllClaimsForUser(int personId)
         {
-            ViewBag.Courses = GetCourses(); // Assuming you have a method to fetch courses
-            return View("~/Views/Home/SubmitClaim.cshtml");
+            return _claimsContext.Claims
+                .Where(x => x.PersonId == personId)
+                .OrderByDescending(x => x.DateClaimed)
+                .ThenBy(x => x.StatusId)
+                .ToList();
         }
 
-        // Sample method to get available courses, you can replace this with your actual service
-        private List<Course> GetCourses()
+        public int UpdateClaim(Claim claim)
         {
-            // Simulated fetching of courses, replace this with actual service logic
-            return new List<Course>
+            //logic to uodate claim to db
+            //get record
+            var _claim = claimsContext.Claims.FIrstOrDefault(x => x.Id == claim.Id);
+            if (_claim != null)
             {
-                new Course { Id = 1, Name = "Course 1" },  // Make sure the Course model has 'Name'
-                new Course { Id = 2, Name = "Course 2" }
-            };
+                double totalFee = claim.TotalHours * claim.Rate;
+                _claim.TotalFee = totalFee;
+                _claim.DateClaimed = claim.DateClaimed;
+                _claim.ClassId = claim.ClassId;
+                _claim.StatusId = claim.StatusId;
+                //add more fields to update
+                claimsContext.SaveChanges();
+            }
+            return claim.Id;
         }
+
     }
 }
 

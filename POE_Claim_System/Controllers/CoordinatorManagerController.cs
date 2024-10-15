@@ -9,7 +9,7 @@ namespace POE_Claim_System.Controllers
 
         public CoordinatorController(ClaimService claimService)
         {
-            _claimService = new claimService();
+            _claimService = claimService(); //injected service
         }
 
         public IActionResult ReviewClaims()
