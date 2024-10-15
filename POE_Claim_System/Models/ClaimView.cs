@@ -1,4 +1,7 @@
-﻿namespace POE_Claim_System.Models
+﻿using POE_Claim_System.Models;
+
+
+namespace POE_Claim_System.Models
 {
     public class ClaimView
     {

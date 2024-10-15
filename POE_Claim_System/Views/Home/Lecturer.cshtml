@@ -1,4 +1,7 @@
-﻿@model POE_Claim_System.ClaimView // Make sure this points to the correct namespace
+﻿@using POE_Claim_System.Models
+
+
+@model POE_Claim_System.Models.ClaimView // Make sure this points to the correct namespace
 
 @{
     ViewData["Title"] = "Submit Claim";
@@ -31,6 +34,7 @@
         <label for="AdditionalNotes">Additional Notes:</label>
         <textarea asp-for="AdditionalNotes" class="form-control"></textarea>
     </div>
+
 
     <div class="form-group">
         <label for="Document">Upload Supporting Document (PDF, DOCX, XLSX):</label>
