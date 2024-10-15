@@ -26,5 +26,6 @@
         //relationships
         public virtual Person Person { get; set; } = new Person();
         public virtual Course Course { get; set; }
+        public string AdditionalNotes { get; internal set; }
     }
 }

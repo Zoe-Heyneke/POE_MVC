@@ -3,6 +3,7 @@ using POE_Claim_System.Services;
 using POE_Claim_System.Models;
 using System.IO; // For working with file streams
 using Microsoft.AspNetCore.Http; // For IFormFile interface
+//using POE_Claim_System.; // Import your ViewModels namespace
 
 namespace POE_Claim_System.Controllers
 {
@@ -22,13 +23,31 @@ namespace POE_Claim_System.Controllers
             return View(claims);
         }
 
+        // GET method to display the SubmitClaim form with available courses
+        public IActionResult SubmitClaim()
+        {
+            var model = new ClaimView(); // Create a new instance of ClaimViewModel
+            ViewBag.Courses = GetCourses(); // Populate your ViewBag with course options
+            return View(model); // Return the view with the model
+        }
+
         [HttpPost]
-        public IActionResult SubmitClaim(Claim claim, IFormFile document)
+        public async Task<IActionResult> SubmitClaim(ClaimView model) // Change parameter type to ClaimViewModel
         {
             if (ModelState.IsValid)
             {
-                // Save the document to the server
-                if (document != null && document.Length > 0)
+                // Create a new Claim object from the model
+                var claim = new Claim
+                {
+                    CourseId = model.CourseId,
+                    TotalHours = model.TotalHours,
+                    Rate = model.Rate,
+                    AdditionalNotes = model.AdditionalNotes,
+                    // Set other properties as needed
+                };
+
+                // Handle the document upload
+                if (model.Document != null && model.Document.Length > 0)
                 {
                     var uploadDir = Path.Combine("wwwroot", "uploads");
 
@@ -37,30 +56,26 @@ namespace POE_Claim_System.Controllers
                         Directory.CreateDirectory(uploadDir);
                     }
 
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(document.FileName);
+                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Document.FileName);
                     var filePath = Path.Combine(uploadDir, uniqueFileName);
 
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        document.CopyTo(stream);
+                        await model.Document.CopyToAsync(stream); // Use CopyToAsync for async file copy
                     }
 
-                    claim.DocumentPath = Path.Combine("uploads", uniqueFileName);
+                    claim.DocumentPath = Path.Combine("uploads", uniqueFileName); // Set the document path
                 }
 
-                _claimService.AddNewClaim(claim); // Use injected service
+                // Save the claim using the injected service
+                _claimService.AddNewClaim(claim);
 
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); // Redirect to Index after successful claim submission
             }
 
-            return View(claim); // If validation fails, return the same view with the model
-        }
-
-        // GET method to display the SubmitClaim form with available courses
-        public IActionResult SubmitClaim()
-        {
-            ViewBag.Courses = GetCourses(); // Assuming you have a method to fetch courses
-            return View("~/Views/Home/SubmitClaim.cshtml");
+            // Repopulate the ViewBag for the courses in case of a validation error
+            ViewBag.Courses = GetCourses();
+            return View(model); // Return the model with validation errors
         }
 
         private List<Course> GetCourses()
