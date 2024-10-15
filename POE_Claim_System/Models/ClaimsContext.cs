@@ -31,15 +31,20 @@ namespace POE_Claim_System.Models
         {
             //specify relationships
             base.OnModelCreating(modelBuilder);
-            modelBuilder.Entity<Person>().HasKey(x => x.Id);
+            modelBuilder.Entity<Person>().HasKey(p => p.Id);
 
             modelBuilder.Entity<Claim>(entity =>
             {
                 //claim has primary id
                 //claim is one person with many claims
-                entity.HasKey(x => x.Id);
-                entity.HasOne(p => p.Person).WithMany(x => x.Claims);
+                entity.HasKey(c => c.Id);
+                entity.HasOne(c => c.Person).WithMany(p => p.Claims).HasForeignKey(c => c.PersonId);
+
+                entity.HasOne(c => c.Course).WithMay().HasForeignKey(c => c.CourseId);
             });
+
+            modelBuilder.Entity<Course>().HasKey(c => c.Id);
+            modelBuilder.Entity<Role>().HasKey(r => r.Id);
         }
     }
 }
