@@ -41,5 +41,19 @@ namespace POE_Unit_Tests
             var updatedClaim = claimService.GetClaimById(claimId);
             Assert.Equal("approved", updatedClaim.ClaimStatus.Status);
         }
+
+        [Fact]
+        public void Test_GetClaimById()
+        {
+            var claimService = new ClaimService(_mockClaimsContext);
+
+            // Assume claimId 1 exists in the mocked database
+            var claimId = 1;
+            var claim = claimService.GetClaimById(claimId);
+
+            Assert.NotNull(claim);  // Check that the claim exists
+            Assert.Equal(claimId, claim.Id);  // Check that the correct claim is returned
+        }
+
     }
 }

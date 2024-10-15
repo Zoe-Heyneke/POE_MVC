@@ -57,7 +57,7 @@ namespace POE_Claim_System.Services
                 _claimsContext.SaveChanges();
                 return claim.Id;
             }
-            return 0;
+            return 1;
         }
 
         public List<Claim> GetAllClaimsForUser(int personId)
@@ -84,6 +84,12 @@ namespace POE_Claim_System.Services
             return claim.Id;
         }
 
+        // Get claim by ID
+        public Claim GetClaimById(int claimId)
+        {
+            var claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claimId);
+            return claim; // Returns null if not found
+        }
     }
 }
 
