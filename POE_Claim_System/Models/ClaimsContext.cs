@@ -46,5 +46,7 @@ namespace POE_Claim_System.Models
             modelBuilder.Entity<Course>().HasKey(c => c.Id);
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
         }
+
+
     }
 }
