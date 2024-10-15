@@ -21,6 +21,7 @@
         //claimstatus
         public int StatusId { get; set; }
         public DateTime DateClaimed { get; set; }
+        public ClaimStatus ClaimStatus { get; set; }
 
         //relationships
         public virtual Person Person { get; set; } = new Person();
