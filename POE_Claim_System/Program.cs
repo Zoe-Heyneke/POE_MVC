@@ -6,6 +6,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container (this replaces the old ConfigureServices method).
 
+
 // Add MVC services (controllers with views)
 builder.Services.AddControllersWithViews();
 
@@ -16,6 +17,7 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
 // Register the ClaimService for Dependency Injection
 builder.Services.AddScoped<ClaimService>();
 
+//building app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline (this replaces the old Configure method).

@@ -5,6 +5,11 @@ namespace POE_Claim_System.Models
 {
     public class ClaimsContext : DbContext
     {
+        //constructor for ClaimsCOntext to accept Db
+        public ClaimsContext(DbContextOptions<ClaimsContext> options)
+            : base(options)
+        {
+        }
         public DbSet<Claim> Claims { get; set; }
 
         public DbSet<Role> Roles { get; set; }
