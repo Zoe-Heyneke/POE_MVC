@@ -2,6 +2,7 @@
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
 using System.Collections.Generic;
+using System.Linq;
 using System.IO; // Add for working with file streams
 //using Microsoft.AspNetCore.Http; // For IFormFile interface
 
@@ -9,7 +10,7 @@ namespace POE_Claim_System.Services
 {
     public class ClaimService
     {
-        private readonly ClaimService _claimService; // Injected service
+        private readonly ClaimsContext _claimsContext; // Injected service
 
         // Constructor injection
         public ClaimService(ClaimsContext claimsContext)
@@ -17,12 +18,33 @@ namespace POE_Claim_System.Services
             _claimsContext = claimsContext; // Use dependency injection for the context
         }
 
-        public IActionResult Index()
+        // Get all pending claims (you need to define what "pending" means, assuming a status ID of 1 represents pending claims)
+        public List<Claim> GetPendingClaims()
         {
-            var claims = _claimService.GetAllClaimsForUser(1); // Use injected service
-            return View(claims);
+            return _claimsContext.Claims
+                .Where(x => x.StatusId == 1) // Assuming StatusId of 1 means "pending"
+                .ToList();
         }
 
+        // Update claim status
+        public void UpdateClaimStatus(int claimId, string status)
+        {
+            var claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claimId);
+            if (claim != null)
+            {
+                if (status == "approved")
+                {
+                    claim.StatusId = 2; // Assuming StatusId of 2 means "approved"
+                }
+                else if (status == "rejected")
+                {
+                    claim.StatusId = 3; // Assuming StatusId of 3 means "rejected"
+                }
+                _claimsContext.SaveChanges();
+            }
+        }
+
+        // Other methods like AddNewClaim, GetAllClaimsForUser, and UpdateClaim can remain as they are
         public int AddNewClaim(Claim claim)
         {
             var rate = _claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
@@ -49,9 +71,7 @@ namespace POE_Claim_System.Services
 
         public int UpdateClaim(Claim claim)
         {
-            //logic to uodate claim to db
-            //get record
-            var _claim = claimsContext.Claims.FIrstOrDefault(x => x.Id == claim.Id);
+            var _claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claim.Id);
             if (_claim != null)
             {
                 double totalFee = claim.TotalHours * claim.Rate;
@@ -59,8 +79,7 @@ namespace POE_Claim_System.Services
                 _claim.DateClaimed = claim.DateClaimed;
                 _claim.ClassId = claim.ClassId;
                 _claim.StatusId = claim.StatusId;
-                //add more fields to update
-                claimsContext.SaveChanges();
+                _claimsContext.SaveChanges();
             }
             return claim.Id;
         }
