@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using POE_Claim_System.Models;
 
 namespace POE_Claim_System.Models
 {

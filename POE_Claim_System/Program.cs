@@ -1,25 +1,23 @@
-using POE_Claim_System.Models;
+using Microsoft.EntityFrameworkCore;
+using POE_Claim_System.Models;  // Make sure this namespace is correct for ClaimContext
+using POE_Claim_System.Services; // Add this if ClaimService is in the Services namespace
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add ClaimContext with a connection string
+// Add ClaimContext with a connection string (ensure it's set in appsettings.json)
 builder.Services.AddDbContext<ClaimContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
 
-// Register the ClaimService
+// Register the ClaimService for Dependency Injection
 builder.Services.AddScoped<ClaimService>();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-
-
-// Configure the HTTP request pipeline.
+// Configure the HTTP request pipeline
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    // The default HSTS value is 30 days. You may want to change this for production scenarios, see https://aka.ms/aspnetcore-hsts.
-    app.UseHsts();
+    app.UseHsts(); // HSTS for production scenarios
 }
 
 app.UseHttpsRedirection();
@@ -29,6 +27,7 @@ app.UseRouting();
 
 app.UseAuthorization();
 
+// Set up the default controller route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
