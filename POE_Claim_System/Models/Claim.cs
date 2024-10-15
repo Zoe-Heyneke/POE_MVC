@@ -18,6 +18,10 @@
 
         public int ClassId { get; set; }
 
+        //claimstatus
+        public int StatusId { get; set; }
+        public DateTime DateClaimed { get; set; }
+
         //relationships
         public virtual Person Person { get; set; } = new Person();
         public virtual Course Course { get; set; }
