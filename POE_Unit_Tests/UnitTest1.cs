@@ -1,4 +1,5 @@
 using POE_Claim_System.Services;
+using POE_Claim_System.Models;
 
 namespace POE_Unit_Tests
 {
