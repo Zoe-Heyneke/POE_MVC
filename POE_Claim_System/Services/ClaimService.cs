@@ -2,6 +2,7 @@
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
 using System.Collections.Generic;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.IO; // Add for working with file streams
 //using Microsoft.AspNetCore.Http; // For IFormFile interface
@@ -16,6 +17,10 @@ namespace POE_Claim_System.Services
         public ClaimService(ClaimsContext claimsContext)
         {
             _claimsContext = claimsContext; // Use dependency injection for the context
+        }
+
+        public ClaimService()
+        {
         }
 
         // Get all pending claims (you need to define what "pending" means, assuming a status ID of 1 represents pending claims)
@@ -87,7 +92,7 @@ namespace POE_Claim_System.Services
         // Get claim by ID
         public Claim GetClaimById(int claimId)
         {
-            var claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claimId);
+            var claim = _claimsContext.Claims.Include(c => c.ClaimStatus).FirstOrDefault(x => x.Id == claimId);
             return claim; // Returns null if not found
         }
     }

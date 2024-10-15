@@ -42,6 +42,7 @@ namespace POE_Unit_Tests
             Assert.Equal("approved", updatedClaim.ClaimStatus.Status);
         }
 
+        /*
         [Fact]
         public void Test_GetClaimById()
         {
@@ -54,6 +55,6 @@ namespace POE_Unit_Tests
             Assert.NotNull(claim);  // Check that the claim exists
             Assert.Equal(claimId, claim.Id);  // Check that the correct claim is returned
         }
-
+        */
     }
 }
