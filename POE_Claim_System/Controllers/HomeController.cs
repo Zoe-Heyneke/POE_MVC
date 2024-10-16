@@ -1,72 +1,78 @@
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
-using POE_Claim_System.Services;
+using Microsoft.AspNetCore.Http; // Required for Session
 
 namespace POE_Claim_System.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ClaimService _claimService;
-        private readonly ClaimsContext _context; // Replace with your actual DbContext
+        private readonly ClaimsContext _context;
 
-        public HomeController(ClaimService claimService, ClaimsContext context)
+        public HomeController(ClaimsContext context)
         {
-            _claimService = claimService;
-            _context = context; // Assign the context
+            _context = context;
         }
 
+        // Display the Sign-Up form
         [HttpGet]
-        public IActionResult Index() => View();
-
-        [HttpPost]
-        public IActionResult SignUp(Person person)
+        public IActionResult SignUp()
         {
-            if (ModelState.IsValid)
-            {
-                _claimService.AddPerson(person); // Save person to DB
-                return RedirectToAction("Index", person.Role == "Lecturer" ? "Lecturer" : "CoordinatorManager");
-            }
-            return View("Index");
+            return View(); // Create a SignUp.cshtml View
         }
 
+        // Handle the Sign-Up submission
         [HttpPost]
-        public IActionResult LogIn(string username, string password, string role)
+        public IActionResult SignUp(string username, string password, string role)
         {
-            try
+            if (!_context.Users.Any(u => u.Username == username))
             {
-                var user = _context.Persons
-                .FirstOrDefault(p => p.Username == username && p.Password == password && p.Role == role);
+                var newUser = new User { Username = username, Password = password, Role = role };
+                _context.Users.Add(newUser);
+                _context.SaveChanges();
+                return RedirectToAction("Login");
+            }
+            ViewBag.Error = "Username already exists.";
+            return View();
+        }
 
-                if (user != null)
+        // Display the Login form
+        [HttpGet]
+        public IActionResult Login()
+        {
+            return View(); // Create a Login.cshtml View
+        }
+
+        // Handle the Login submission
+        [HttpPost]
+        public IActionResult Login(string username, string password)
+        {
+            var user = _context.Users.FirstOrDefault(u => u.Username == username && u.Password == password);
+            if (user != null)
+            {
+                // Store user info in session
+                HttpContext.Session.SetString("Username", user.Username);
+                HttpContext.Session.SetString("Role", user.Role);
+
+                // Redirect based on role
+                if (user.Role == "Lecturer")
                 {
-                    // Set user session or authentication cookie here if necessary
-
-                    // Redirect based on role
-                    if (user.Role == "Lecturer")
-                    {
-                        return RedirectToAction("Index", "Lecturer");
-                    }
-                    else if (user.Role == "CM") // For Coordinator and Manager
-                    {
-                        return RedirectToAction("Index", "Coordinator");
-                    }
+                    return RedirectToAction("Index", "Lecturer");
                 }
-                else
+                else if (user.Role == "Coordinator")
                 {
-                    // Handle login failure
-                    ViewBag.ErrorMessage = "Invalid login attempt. Please try again.";
-                    return View("Index");
+                    return RedirectToAction("Index", "CoordinatorManager");
                 }
             }
-            catch (Exception ex) 
-            {
-                // Log the exception (using a logging framework or Console)
-                Console.WriteLine($"Error: {ex.Message}");
-                ViewBag.ErrorMessage = "An error occurred while processing your request.";
-            }
-            return View("Index");
 
+            ViewBag.Error = "Invalid username or password.";
+            return View();
+        }
+
+        // Logout action
+        public IActionResult Logout()
+        {
+            HttpContext.Session.Clear(); // Clear session data
+            return RedirectToAction("Login");
         }
     }
 }

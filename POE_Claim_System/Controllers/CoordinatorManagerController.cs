@@ -15,8 +15,16 @@ namespace POE_Claim_System.Controllers
 
         public IActionResult Index()
         {
-            var model = GetPendingClaims(); // Fetch pending claims
-            return View("~/Views/Home/CoordinatorManager.cshtml", model); // Specify the path to CoordinatorManager.cshtml
+            // Ensure the user is logged in and is a Coordinator
+            var role = HttpContext.Session.GetString("Role");
+            if (role != "Coordinator")
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
+            // Fetch pending claims for the coordinator to review
+            var pendingClaims = _claimService.GetPendingClaims();
+            return View(pendingClaims); // Create Index.cshtml for CoordinatorManager
         }
 
         private List<ClaimView> GetPendingClaims()
@@ -35,9 +43,10 @@ namespace POE_Claim_System.Controllers
         [HttpPost]
         public IActionResult ApproveClaim(int claimId)
         {
-            _claimService.UpdateClaimStatus(claimId, "approved");
-            return RedirectToAction("ReviewClaims");
+            _claimService.ApproveClaim(claimId);
+            return RedirectToAction("CoordinatorPage");
         }
+
 
         [HttpPost]
         public IActionResult RejectClaim(int claimId)
