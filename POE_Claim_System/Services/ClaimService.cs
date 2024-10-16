@@ -85,6 +85,16 @@ namespace POE_Claim_System.Services
                 _context.SaveChanges();
             }
         }
+
+        public void ApproveClaim(int claimId)
+        {
+            var claim = _context.Claims.FirstOrDefault(c => c.Id == claimId);
+            if (claim != null)
+            {
+                claim.Status = "approved";
+                _context.SaveChanges();
+            }
+        }
     }
 }
 

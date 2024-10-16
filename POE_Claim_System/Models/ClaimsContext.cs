@@ -24,6 +24,8 @@ namespace POE_Claim_System.Models
 
         public DbSet<Rate> Rates { get; set; }
 
+        public DbSet<User> Users { get; set; }
+
         //when configuring
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {

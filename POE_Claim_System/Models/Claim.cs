@@ -28,9 +28,8 @@
         public virtual Course Course { get; set; }
         public string AdditionalNotes { get; internal set; }
 
-        public string Username { get; set; }    
-
-
+        public string Username { get; set; }
+        public string Status { get; internal set; }
     }
 
 }

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using POE_Claim_System.Models;
-using Microsoft.AspNetCore.Http; // Required for session access
+using Microsoft.AspNetCore.Http;
+using POE_Claim_System.Services; // Required for session access
 
 namespace POE_Claim_System.Controllers
 {
