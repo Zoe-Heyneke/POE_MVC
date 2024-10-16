@@ -5,19 +5,22 @@ using POE_Claim_System.Services; // Ensure this is the correct namespace for Cla
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container (this replaces the old ConfigureServices method).
-
-
 // Add MVC services (controllers with views)
 builder.Services.AddControllersWithViews();
 
 // Register your DbContext (ClaimsContext) with the connection string from appsettings.json
 builder.Services.AddDbContext<ClaimsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+{
+    options.UseMySql(
+        builder.Configuration.GetConnectionString("DefaultConnection"),
+        new MySqlServerVersion(new Version(8, 0, 27)) // Use the version of your MySQL server
+    );
+});
 
 // Register the ClaimService for Dependency Injection
 builder.Services.AddScoped<ClaimService>();
 
-//building app
+// Building the app
 var app = builder.Build();
 
 // Configure the HTTP request pipeline (this replaces the old Configure method).
