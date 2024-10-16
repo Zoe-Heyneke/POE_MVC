@@ -19,6 +19,13 @@ namespace POE_Claim_System.Controllers
             return View("~/Views/Home/ReviewClaims.cshtml", pendingClaims);
         }
 
+        public IActionResult PendingClaims()
+        {
+            var pendingClaims = _claimService.GetPendingClaims();
+            return View(pendingClaims); // Passing the list of ClaimView to the view
+        }
+
+
         //approve claim with claimId
         [HttpPost]
         public IActionResult ApproveClaim(int claimId)

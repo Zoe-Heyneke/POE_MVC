@@ -23,6 +23,7 @@ namespace POE_Claim_System.Services
         {
         }
 
+        /*
         // Get all pending claims (you need to define what "pending" means, assuming a status ID of 1 represents pending claims)
         public List<Claim> GetPendingClaims()
         {
@@ -30,6 +31,7 @@ namespace POE_Claim_System.Services
                 .Where(x => x.StatusId == 1) // Assuming StatusId of 1 means "pending"
                 .ToList();
         }
+        */
 
         // Update claim status
         public void UpdateClaimStatus(int claimId, string status)
@@ -65,14 +67,30 @@ namespace POE_Claim_System.Services
             return 1;
         }
 
-        public List<Claim> GetAllClaimsForUser(int personId)
+        public List<ClaimView> GetPendingClaims()
         {
-            return _claimsContext.Claims
-                .Where(x => x.PersonId == personId)
-                .OrderByDescending(x => x.DateClaimed)
-                .ThenBy(x => x.StatusId)
-                .ToList();
+            var claims = (from c in _claimsContext.Claims
+                          join p in _claimsContext.Persons on c.PersonId equals p.Id // Assuming "Persons" is the table for lecturer details
+                          where c.StatusId == 1 // Pending claims
+                          select new ClaimView
+                          {
+                              Id = c.Id,
+                              PersonId = c.PersonId,
+                              LecturerName = p.FirstName,
+                              LecturerSurname = p.LastName,
+                              CourseId = c.CourseId,
+                              TotalHours = c.TotalHours,
+                              Rate = c.Rate,
+                              TotalFee = c.TotalFee,
+                              AdditionalNotes = c.AdditionalNotes,
+                              Document = c.DocumentPath,
+                              DateClaimed = c.DateClaimed,
+                              StatusId = c.StatusId
+                          }).ToList();
+
+            return claims;
         }
+
 
         public int UpdateClaim(Claim claim)
         {
