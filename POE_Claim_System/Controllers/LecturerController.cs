@@ -16,6 +16,7 @@ namespace POE_Claim_System.Controllers
 
         public IActionResult Index()
         {
+           
             var username = HttpContext.User.Identity.Name; // Get the logged-in user's username (or ID)
             if (username == null)
             {
@@ -24,6 +25,8 @@ namespace POE_Claim_System.Controllers
 
             var claims = _claimService.GetAllClaimsForUser(username); // Retrieve claims for this user
             return View(claims); // Return claims to the view
+           
+           
         }
     }
 }

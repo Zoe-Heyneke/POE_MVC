@@ -1,4 +1,3 @@
-using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using POE_Claim_System.Services;
@@ -15,12 +14,15 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
         new MySqlServerVersion(new Version(8, 0, 27))
     ));
 
-// Register Identity services using the same ClaimsContext
-builder.Services.AddDefaultIdentity<POE_Claim_SystemUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<ClaimsContext>();
-
 // Register your ClaimService
 builder.Services.AddScoped<ClaimService>();
+
+builder.Services.AddSession(options =>
+{
+    options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
+    options.Cookie.HttpOnly = true; // Make the session cookie HTTP only
+    options.Cookie.IsEssential = true; // Mark the session as essential
+});
 
 var app = builder.Build();
 
@@ -37,15 +39,15 @@ app.UseStaticFiles();
 app.UseRouting();
 
 // Ensure authentication and authorization middleware are added
-app.UseAuthentication();
-app.UseAuthorization();
+app.UseAuthentication(); // Uncomment if using authentication later
+app.UseAuthorization();  // Ensure this is included
 
 // Map controller routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-// Additional routes for account actions if necessary
-app.MapRazorPages(); // This is required if you're using Razor Pages for Identity
+// Map Razor Pages if necessary
+// app.MapRazorPages(); // Uncomment if using Razor Pages
 
 app.Run();

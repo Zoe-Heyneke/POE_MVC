@@ -7,40 +7,12 @@
 <div class="text-center">
     <h1 class="display-4">Welcome to the Contract Monthly Claim System (CMCS)</h1>
 
-    <h2>Access System</h2>
-
-    <form asp-controller="User" asp-action="SelectRole" method="post">
-        <div class="form-group">
-            <label asp-for="Username">Username</label>
-            <input asp-for="Username" class="form-control" required />
-        </div>
-        <div class="form-group">
-            <label asp-for="Password">Password</label>
-            <input asp-for="Password" type="password" class="form-control" required />
-        </div>
-        <div class="form-group">
-            <label asp-for="Role">Select Role</label>
-            <select asp-for="Role" class="form-control" required>
-                <option value="">Select Role</option>
-                <option value="Lecturer">Lecturer</option>
-                <option value="CM">Coordinator and Manager</option>
-            </select>
-        </div>
-        <button type="submit" class="btn btn-primary">Continue</button>
-    </form>
-
-    <!-- Home Link -->
-    <div class="mt-4">
-        <a href="@Url.Action("Index", "Lecturer")" class="btn btn-secondary">Lecturer</a>
-        <a href="@Url.Action("Index", "Coordinator")" class="btn btn-secondary">Coordinator Manager</a>
-    </div>
-
     <h2>Sign Up | Log In</h2>
 
+    <!-- Sign Up Form -->
     <div id="signUpForm" style="display:none;">
         <h3>Sign Up</h3>
         <form asp-action="SignUp" method="post">
-            <!-- Sign-up fields here -->
             <div class="form-group">
                 <label asp-for="FirstName"></label>
                 <input asp-for="FirstName" class="form-control" required />
@@ -81,6 +53,7 @@
         </form>
     </div>
 
+    <!-- Log In Form -->
     <div id="logInForm" style="display:none;">
         <h3>Log In</h3>
         <form asp-action="LogIn" method="post">
@@ -104,14 +77,14 @@
         </form>
     </div>
 
-    <button onclick="toggleForms('signUp')">Sign Up</button>
-    <button onclick="toggleForms('logIn')">Log In</button>
-
-    
+    <!-- Buttons to toggle between Sign Up and Log In -->
+    <div class="mt-4">
+        <button class="btn btn-primary" onclick="toggleForms('signUp')">Sign Up</button>
+        <button class="btn btn-secondary" onclick="toggleForms('logIn')">Log In</button>
+    </div>
 </div>
 
 <script>
-    /*
     function toggleForms(formType) {
         const signUpForm = document.getElementById('signUpForm');
         const logInForm = document.getElementById('logInForm');
@@ -124,14 +97,4 @@
             logInForm.style.display = 'block';
         }
     }
-    */
-    function redirectToRolePage() {
-        var role = document.getElementById("roleSelect").value;
-
-        if (role === "Lecturer") {
-            window.location.href = '@Url.Action("Index", "Lecturer")'; // Redirect to Lecturer page
-        } else if (role === "CM") {
-            window.location.href = '@Url.Action("Index", "Coordinator")'; // Redirect to Coordinator page
-        }
 </script>
-
