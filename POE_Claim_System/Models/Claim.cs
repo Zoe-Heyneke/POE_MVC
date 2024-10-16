@@ -7,12 +7,12 @@
         public int TotalHours { get; set; }
         public double Rate { get; set; }
 
-        public double TotalFee { get; set; }    
+        public double TotalFee { get; set; }
         public DateOnly StartDate { get; set; }
         public DateOnly EndDate { get; set; }
         public DateTime Timestamp { get; set; }
 
-        public string DocumentPath {  get; set; }
+        public string DocumentPath { get; set; }
         public int PersonId { get; set; }
         public int CourseId { get; set; }
 
@@ -27,5 +27,10 @@
         public virtual Person Person { get; set; } = new Person();
         public virtual Course Course { get; set; }
         public string AdditionalNotes { get; internal set; }
+
+        public string Username { get; set; }    
+
+
     }
+
 }

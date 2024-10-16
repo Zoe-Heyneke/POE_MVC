@@ -1,120 +1,82 @@
-﻿//using Microsoft.AspNetCore.Mvc;
-using POE_Claim_System.Services;
+﻿using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using System.Collections.Generic;
-using Microsoft.EntityFrameworkCore;
 using System.Linq;
-using System.IO; // Add for working with file streams
-//using Microsoft.AspNetCore.Http; // For IFormFile interface
+using System.Threading.Tasks;
 
 namespace POE_Claim_System.Services
 {
     public class ClaimService
     {
-        private readonly ClaimsContext _claimsContext; // Injected service
+        private readonly ClaimsContext _context;
 
-        // Constructor injection
         public ClaimService(ClaimsContext claimsContext)
         {
-            _claimsContext = claimsContext; // Use dependency injection for the context
+            _context = claimsContext;
         }
 
-        public ClaimService()
+        public Person GetUserByUsername(string username)
         {
+            return _context.Persons.FirstOrDefault(p => p.Username == username);
         }
 
-        /*
-        // Get all pending claims (you need to define what "pending" means, assuming a status ID of 1 represents pending claims)
-        public List<Claim> GetPendingClaims()
+        public void AddPerson(Person person)
         {
-            return _claimsContext.Claims
-                .Where(x => x.StatusId == 1) // Assuming StatusId of 1 means "pending"
-                .ToList();
-        }
-        */
-
-        // Update claim status
-        public void UpdateClaimStatus(int claimId, string status)
-        {
-            var claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claimId);
-            if (claim != null)
-            {
-                if (status == "approved")
-                {
-                    claim.StatusId = 2; // Assuming StatusId of 2 means "approved"
-                }
-                else if (status == "rejected")
-                {
-                    claim.StatusId = 3; // Assuming StatusId of 3 means "rejected"
-                }
-                _claimsContext.SaveChanges();
-            }
+            _context.Persons.Add(person);
+            _context.SaveChanges();
         }
 
-        // Other methods like AddNewClaim, GetAllClaimsForUser, and UpdateClaim can remain as they are
-        public int AddNewClaim(Claim claim)
+        public bool ValidateUser(string username, string password, string role)
         {
-            var rate = _claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
-            if (rate != null)
-            {
-                claim.Rate = rate.HourlyRate;
-                double totalFee = claim.TotalHours * claim.Rate;
-                claim.TotalFee = totalFee;
-                _claimsContext.Claims.Add(claim);
-                _claimsContext.SaveChanges();
-                return claim.Id;
-            }
-            return 1;
+            return _context.Persons.Any(p => p.Username == username && p.Password == password && p.Role == role);
+        }
+
+        public async Task AddClaimAsync(Claim claim)
+        {
+            _context.Claims.Add(claim);
+            await _context.SaveChangesAsync();
         }
 
         public List<ClaimView> GetPendingClaims()
         {
-            var claims = (from c in _claimsContext.Claims
-                          join p in _claimsContext.Persons on c.PersonId equals p.Id // Assuming "Persons" is the table for lecturer details
-                          where c.StatusId == 1 // Pending claims
-                          select new ClaimView
-                          {
-                              Id = c.Id,
-                              PersonId = c.PersonId,
-                              LecturerName = p.FirstName,
-                              LecturerSurname = p.LastName,
-                              CourseId = c.CourseId,
-                              TotalHours = c.TotalHours,
-                              Rate = c.Rate,
-                              TotalFee = c.TotalFee,
-                              AdditionalNotes = c.AdditionalNotes,
-                              Document = c.DocumentPath,
-                              DateClaimed = c.DateClaimed,
-                              StatusId = c.StatusId
-                          }).ToList();
+            return _context.Claims
+                .Where(c => c.ClaimStatus.Status == "pending")
+                .Select(c => new ClaimView
+                {
+                    Id = c.Id,
+                    PersonId = c.PersonId,
+                    LecturerName = c.Person.FirstName,
+                    LecturerSurname = c.Person.LastName,
+                    CourseId = c.CourseId,
+                    TotalHours = c.TotalHours,
+                    Rate = c.Rate,
+                    TotalFee = c.TotalFee,
+                    DateClaimed = c.DateClaimed,
+                    StatusId = c.StatusId,
+                    Status = c.ClaimStatus.Status,
+                    AdditionalNotes = c.AdditionalNotes
+                })
+                .ToList();
+        }
 
-            return claims;
+        public List<Claim> GetAllClaimsForUser(string username)
+        {
+            return _context.Claims.Where(c => c.Username == username).ToList();
         }
 
 
-        public int UpdateClaim(Claim claim)
+        public void UpdateClaimStatus(int claimId, string status)
         {
-            var _claim = _claimsContext.Claims.FirstOrDefault(x => x.Id == claim.Id);
-            if (_claim != null)
+            var claim = _context.Claims.Find(claimId);
+            if (claim != null)
             {
-                double totalFee = claim.TotalHours * claim.Rate;
-                _claim.TotalFee = totalFee;
-                _claim.DateClaimed = claim.DateClaimed;
-                _claim.ClassId = claim.ClassId;
-                _claim.StatusId = claim.StatusId;
-                _claimsContext.SaveChanges();
+                claim.ClaimStatus.Status = status;
+                _context.SaveChanges();
             }
-            return claim.Id;
-        }
-
-        // Get claim by ID
-        public Claim GetClaimById(int claimId)
-        {
-            var claim = _claimsContext.Claims.Include(c => c.ClaimStatus).FirstOrDefault(x => x.Id == claimId);
-            return claim; // Returns null if not found
         }
     }
 }
+
 
 /*
 namespace POE_Claim_System.Services

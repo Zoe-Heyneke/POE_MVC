@@ -1,86 +1,117 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using POE_Claim_System.Services;
 using POE_Claim_System.Models;
+using POE_Claim_System.Services;
 using System.Collections.Generic;
-using System.IO; // For working with file streams
-using Microsoft.AspNetCore.Http; // For IFormFile interface
-//using POE_Claim_System.; // Import your ViewModels namespace
+using System.IO;
+using System.Threading.Tasks;
+using Microsoft.AspNetCore.Http;
+using Microsoft.EntityFrameworkCore; // Include if you're using DbContext
 
 namespace POE_Claim_System.Controllers
 {
     public class LecturerController : Controller
     {
-        private readonly ClaimService _claimService; // Injected service
-        private readonly ClaimsContext _context; // Add database context
+        private readonly ClaimService _claimService;
+        private readonly ClaimsContext _context; // Added to access the database context
 
-        // Constructor injection
         public LecturerController(ClaimService claimService, ClaimsContext context)
         {
-            _claimService = claimService; // Assign injected service
-            _context = context;           // Assign injected context
+            _claimService = claimService;
+            _context = context; // Initialize context
         }
-    }
 
+        // Index action to display all claims for the logged-in user
         public IActionResult Index()
         {
-            var claims = _claimService.GetAllClaimsForUser(1); // Use injected service
+            var username = User.Identity.Name;
+
+            // Get claims for the logged-in user using username
+            var claims = _claimService.GetAllClaimsForUser(username);
             return View(claims);
         }
 
-        // GET method to display the SubmitClaim form with available courses
+        // Action to display the form for submitting a claim
         public IActionResult SubmitClaim()
         {
-            var model = new ClaimView(); // Create a new instance of ClaimViewModel
-            ViewBag.Courses = GetCourses(); // Populate your ViewBag with course options
-            return View(model); // Return the view with the model
+            var model = new ClaimView();
+            ViewBag.Courses = GetCourses(); // Load available courses
+            return View(model);
         }
 
+        // POST action to submit a claim
         [HttpPost]
         public async Task<IActionResult> SubmitClaim(ClaimView model, IFormFile uploadDocument)
         {
             if (ModelState.IsValid)
             {
-                // Create a new Claim object from the model
-                var claim = new Claim
+                try
                 {
-                    CourseId = model.CourseId,
-                    TotalHours = model.TotalHours,
-                    Rate = model.Rate,
-                    AdditionalNotes = model.AdditionalNotes,
-                    // Other properties from the model
-                };
+                    var username = GetCurrentUsername(); // Get the current user's username
 
-                // Handle file upload
-                if (uploadDocument != null && uploadDocument.Length > 0)
-                {
-                    var filePath = Path.Combine("wwwroot/documents", Path.GetFileName(uploadDocument.FileName));
-                    using (var stream = new FileStream(filePath, FileMode.Create))
+                    var claim = new Claim
                     {
-                        await uploadDocument.CopyToAsync(stream);
+                        CourseId = model.CourseId,
+                        TotalHours = (int)model.TotalHours,
+                        Rate = model.Rate,
+                        AdditionalNotes = model.AdditionalNotes,
+                        Username = username // Set the username directly
+                    };
+
+                    // Handle file upload
+                    if (uploadDocument != null && uploadDocument.Length > 0)
+                    {
+                        var filePath = Path.Combine("wwwroot/documents", Path.GetFileName(uploadDocument.FileName));
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await uploadDocument.CopyToAsync(stream);
+                        }
+                        claim.DocumentPath = filePath; // Set the document path in the claim
                     }
-                    claim.DocumentPath = filePath; // Save the file path in the claim
+
+                    // Add the claim to the service
+                    await _claimService.AddClaimAsync(claim);
+                    return RedirectToAction("Success");
                 }
-
-                // Save the claim to the database
-                _context.Claims.Add(claim);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction("Success"); // Redirect on success
+                catch (UnauthorizedAccessException ex)
+                {
+                    ModelState.AddModelError("", ex.Message); // Add the error message to the ModelState
+                }
+                catch (KeyNotFoundException ex)
+                {
+                    ModelState.AddModelError("", ex.Message); // Add the error message to the ModelState
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "An unexpected error occurred."); // General error message
+                }
             }
 
-            // Repopulate ViewBag in case of error
+            // Reload courses in case of validation errors
             ViewBag.Courses = GetCourses();
-            return View(model); // Return the view with validation errors
+            return View(model);
         }
 
 
-        private List<Course> GetCourses()
+
+        // Helper method to get a list of courses
+        private List<Course> GetCourses() => new List<Course>
         {
-            return new List<Course>
+            new Course { Id = 1, Name = "Course 1" },
+            new Course { Id = 2, Name = "Course 2" }
+        };
+
+        // Helper method to get the current user's ID based on the username
+        private string GetCurrentUsername()
+        {
+            var username = User.Identity.Name; // Get the username from the claims
+
+            if (string.IsNullOrEmpty(username))
             {
-                new Course { Id = 1, Name = "Course 1" },
-                new Course { Id = 2, Name = "Course 2" }
-            };
+                throw new UnauthorizedAccessException("User is not authenticated.");
+            }
+
+            return username; // Return username directly
         }
+
     }
 }

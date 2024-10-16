@@ -1,51 +1,44 @@
-using System.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
 using POE_Claim_System.Models;
+using POE_Claim_System.Services;
 
 namespace POE_Claim_System.Controllers
 {
     public class HomeController : Controller
     {
-        [HttpGet]
-        public IActionResult Index()
+        private readonly ClaimService _claimService;
+
+        public HomeController(ClaimService claimService)
         {
-            return View();
+            _claimService = claimService;
         }
+
+        [HttpGet]
+        public IActionResult Index() => View();
 
         [HttpPost]
         public IActionResult SignUp(Person person)
         {
-            // Add logic to save the person details to the database
+            if (ModelState.IsValid)
+            {
+                _claimService.AddPerson(person); // Save person to DB
 
-            // Redirect based on the role
-            if (person.Role == "Lecturer")
-            {
-                return RedirectToAction("Index", "Lecturer");
-            }
-            else if (person.Role == "Coordinator" || person.Role == "Manager")
-            {
-                return RedirectToAction("Index", "CoordinatorManager");
+                return RedirectToAction("Index", person.Role == "Lecturer" ? "Lecturer" : "CoordinatorManager");
             }
 
-            return View("Index"); // Fallback if needed
+            return View("Index");
         }
 
         [HttpPost]
         public IActionResult LogIn(string username, string password, string role)
         {
-            // Validate user credentials
-
-            // Redirect based on the role
-            if (role == "Lecturer")
+            if (_claimService.ValidateUser(username, password, role))
             {
-                return RedirectToAction("Index", "Lecturer");
-            }
-            else if (role == "Coordinator" || role == "Manager")
-            {
-                return RedirectToAction("Index", "CoordinatorManager");
+                return RedirectToAction("Index", role == "Lecturer" ? "Lecturer" : "CoordinatorManager");
             }
 
-            return View("Index"); // Fallback if needed
+            ModelState.AddModelError("", "Invalid login attempt.");
+            return View("Index");
         }
     }
 }

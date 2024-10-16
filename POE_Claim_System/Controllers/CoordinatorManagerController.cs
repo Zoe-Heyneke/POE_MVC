@@ -3,30 +3,21 @@ using POE_Claim_System.Services;
 
 namespace POE_Claim_System.Controllers
 {
-    public class CoordinatorController : Controller
+    public class CoordinatorManagerController : Controller
     {
         private readonly ClaimService _claimService;
 
-        public CoordinatorController(ClaimService claimService)
+        public CoordinatorManagerController(ClaimService claimService)
         {
-            _claimService = claimService; //injected service with constructor
+            _claimService = claimService;
         }
 
-        //display pending claims
         public IActionResult ReviewClaims()
         {
             var pendingClaims = _claimService.GetPendingClaims();
             return View("~/Views/Home/ReviewClaims.cshtml", pendingClaims);
         }
 
-        public IActionResult PendingClaims()
-        {
-            var pendingClaims = _claimService.GetPendingClaims();
-            return View(pendingClaims); // Passing the list of ClaimView to the view
-        }
-
-
-        //approve claim with claimId
         [HttpPost]
         public IActionResult ApproveClaim(int claimId)
         {
@@ -34,7 +25,6 @@ namespace POE_Claim_System.Controllers
             return RedirectToAction("ReviewClaims");
         }
 
-        //reject claim with claimId
         [HttpPost]
         public IActionResult RejectClaim(int claimId)
         {
@@ -42,5 +32,4 @@ namespace POE_Claim_System.Controllers
             return RedirectToAction("ReviewClaims");
         }
     }
-
 }
