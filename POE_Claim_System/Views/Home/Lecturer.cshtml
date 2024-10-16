@@ -1,45 +1,81 @@
-﻿@using POE_Claim_System.Models
-
-
-@model POE_Claim_System.Models.ClaimView // Make sure this points to the correct namespace
+﻿@model POE_Claim_System.Models.Claim
 
 @{
-    ViewData["Title"] = "Submit Claim";
+    ViewData["Title"] = "Lecturer Claim Submission";
 }
 
-<h2>Submit Claim</h2>
+<div class="container mt-4">
+    <h2 class="text-center">Claim Submission</h2>
 
-<form enctype="multipart/form-data" asp-action="SubmitClaim" asp-controller="Lecturer" method="post">
-    <div class="form-group">
-        <label for="Course">Select Course:</label>
-        <select asp-for="CourseId" class="form-control" asp-items="ViewBag.Courses"></select>
-    </div>
+    <form asp-action="SubmitClaim" method="post" enctype="multipart/form-data">
+        <!-- Lecturer Section -->
+        <div class="mt-4">
+            <h4>--Lecturer--</h4>
+            <div class="form-group">
+                <label for="lecturerName">Lecturer Name:</label>
+                <input asp-for="Person.FirstName" id="lecturerName" name="lecturerName" class="form-control" placeholder="Enter your first name" />
+            </div>
+            <div class="form-group">
+                <label for="lecturerSurname">Lecturer Surname:</label>
+                <input asp-for="Person.LastName" id="lecturerSurname" name="lecturerSurname" class="form-control" placeholder="Enter your surname" />
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="Hours">Select Hours Worked:</label>
-        <select asp-for="TotalHours" class="form-control">
-            <option value="1">1 hour</option>
-            <option value="2">2 hours</option>
-            <option value="3">3 hours</option>
-            <!-- Add more options as needed -->
-        </select>
-    </div>
+        <!-- Course Section -->
+        <div class="mt-4">
+            <h4>--Course--</h4>
+            <div class="form-group">
+                <label for="courseCode">Course Code:</label>
+                <input asp-for="Course.CourseCode" id="courseCode" name="courseCode" class="form-control" placeholder="Enter course code" />
+            </div>
+            <div class="form-group">
+                <label for="groupNumber">Group Number:</label>
+                <input asp-for="Course.Group" id="groupNumber" name="groupNumber" class="form-control" placeholder="Enter group number" />
+            </div>
+            <div class="form-group">
+                <label for="startDate">Start Date:</label>
+                <input asp-for="Course.StartDate" type="date" id="startDate" name="startDate" class="form-control" />
+            </div>
+            <div class="form-group">
+                <label for="endDate">End Date:</label>
+                <input asp-for="Course.EndDate" type="date" id="endDate" name="endDate" class="form-control" />
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="HourlyRate">Hourly Rate (Auto-filled):</label>
-        <input type="text" asp-for="Rate" class="form-control" readonly />
-    </div>
+        <!-- Hours Section -->
+        <div class="mt-4">
+            <h4>--Hours--</h4>
+            <div class="form-group">
+                <label for="totalHours">Total Hours Worked:</label>
+                <input asp-for="TotalHours" id="totalHours" name="totalHours" class="form-control" placeholder="Enter total hours worked" />
+            </div>
+            <div class="form-group">
+                <label for="hourlyRate">Hourly Rate:</label>
+                <input asp-for="Rate" id="hourlyRate" name="hourlyRate" class="form-control" placeholder="Enter hourly rate" />
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="AdditionalNotes">Additional Notes:</label>
-        <textarea asp-for="AdditionalNotes" class="form-control"></textarea>
-    </div>
+        <!-- Documents Section -->
+        <div class="mt-4">
+            <h4>--Documents--</h4>
+            <div class="form-group">
+                <label for="uploadDocument">Choose a Document to Upload:</label>
+                <input asp-for="DocumentPath" type="file" id="uploadDocument" name="uploadDocument" class="form-control-file" />
+            </div>
+        </div>
 
+        <!-- Notes Section -->
+        <div class="mt-4">
+            <h4>--Notes--</h4>
+            <div class="form-group">
+                <label for="additionalNotes">Additional Notes:</label>
+                <input asp-for="AdditionalNotes" id="additionalNotes" name="additionalNotes" class="form-control" placeholder="Add any notes" />
+            </div>
+        </div>
 
-    <div class="form-group">
-        <label for="Document">Upload Supporting Document (PDF, DOCX, XLSX):</label>
-        <input type="file" name="Document" class="form-control" accept=".pdf,.docx,.xlsx" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Submit Claim</button>
-</form>
+        <!-- Submit Button -->
+        <div class="text-center mt-4">
+            <button type="submit" class="btn btn-primary">Submit Claim</button>
+        </div>
+    </form>
+</div>

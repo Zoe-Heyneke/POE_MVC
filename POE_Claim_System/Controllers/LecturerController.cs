@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
+using System.Collections.Generic;
 using System.IO; // For working with file streams
 using Microsoft.AspNetCore.Http; // For IFormFile interface
 //using POE_Claim_System.; // Import your ViewModels namespace
@@ -10,12 +11,15 @@ namespace POE_Claim_System.Controllers
     public class LecturerController : Controller
     {
         private readonly ClaimService _claimService; // Injected service
+        private readonly ClaimsContext _context; // Add database context
 
         // Constructor injection
-        public LecturerController(ClaimService claimService)
+        public LecturerController(ClaimService claimService, ClaimsContext context)
         {
             _claimService = claimService; // Assign injected service
+            _context = context;           // Assign injected context
         }
+    }
 
         public IActionResult Index()
         {
@@ -32,7 +36,7 @@ namespace POE_Claim_System.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SubmitClaim(ClaimView model) // Change parameter type to ClaimViewModel
+        public async Task<IActionResult> SubmitClaim(ClaimView model, IFormFile uploadDocument)
         {
             if (ModelState.IsValid)
             {
@@ -43,40 +47,32 @@ namespace POE_Claim_System.Controllers
                     TotalHours = model.TotalHours,
                     Rate = model.Rate,
                     AdditionalNotes = model.AdditionalNotes,
-                    // Set other properties as needed
+                    // Other properties from the model
                 };
 
-                // Handle the document upload
-                if (model.Document != null && model.Document.Length > 0)
+                // Handle file upload
+                if (uploadDocument != null && uploadDocument.Length > 0)
                 {
-                    var uploadDir = Path.Combine("wwwroot", "uploads");
-
-                    if (!Directory.Exists(uploadDir))
-                    {
-                        Directory.CreateDirectory(uploadDir);
-                    }
-
-                    var uniqueFileName = Guid.NewGuid().ToString() + "_" + Path.GetFileName(model.Document.FileName);
-                    var filePath = Path.Combine(uploadDir, uniqueFileName);
-
+                    var filePath = Path.Combine("wwwroot/documents", Path.GetFileName(uploadDocument.FileName));
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        await model.Document.CopyToAsync(stream); // Use CopyToAsync for async file copy
+                        await uploadDocument.CopyToAsync(stream);
                     }
-
-                    claim.DocumentPath = Path.Combine("uploads", uniqueFileName); // Set the document path
+                    claim.DocumentPath = filePath; // Save the file path in the claim
                 }
 
-                // Save the claim using the injected service
-                _claimService.AddNewClaim(claim);
+                // Save the claim to the database
+                _context.Claims.Add(claim);
+                await _context.SaveChangesAsync();
 
-                return RedirectToAction("Index"); // Redirect to Index after successful claim submission
+                return RedirectToAction("Success"); // Redirect on success
             }
 
-            // Repopulate the ViewBag for the courses in case of a validation error
+            // Repopulate ViewBag in case of error
             ViewBag.Courses = GetCourses();
-            return View(model); // Return the model with validation errors
+            return View(model); // Return the view with validation errors
         }
+
 
         private List<Course> GetCourses()
         {
