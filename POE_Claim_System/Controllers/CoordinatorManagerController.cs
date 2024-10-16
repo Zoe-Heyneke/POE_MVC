@@ -1,9 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using POE_Claim_System.Services;
-using POE_Claim_System.Models;
+using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
+using POE_Claim_System.Services; // Your service that handles claims
 
 namespace POE_Claim_System.Controllers
 {
+    [Authorize(Roles = "Coordinator")] // Only allow Coordinators to access this controller
     public class CoordinatorManagerController : Controller
     {
         private readonly ClaimService _claimService;
@@ -13,46 +14,27 @@ namespace POE_Claim_System.Controllers
             _claimService = claimService;
         }
 
+        // Display all pending claims for review
         public IActionResult Index()
         {
-            // Ensure the user is logged in and is a Coordinator
-            var role = HttpContext.Session.GetString("Role");
-            if (role != "Coordinator")
-            {
-                return RedirectToAction("Login", "Home");
-            }
-
-            // Fetch pending claims for the coordinator to review
             var pendingClaims = _claimService.GetPendingClaims();
-            return View(pendingClaims); // Create Index.cshtml for CoordinatorManager
+            return View(pendingClaims); // View to show all pending claims
         }
 
-        private List<ClaimView> GetPendingClaims()
-        {
-            // Fetch pending claims from the database or your data source
-            // This is a placeholder; replace it with your actual implementation
-            return _claimService.GetPendingClaims(); // Example of calling a service method
-        }
-
-        public IActionResult ReviewClaims()
-        {
-            var pendingClaims = _claimService.GetPendingClaims();
-            return View("~/Views/Home/ReviewClaims.cshtml", pendingClaims);
-        }
-
+        // Approve a claim
         [HttpPost]
         public IActionResult ApproveClaim(int claimId)
         {
             _claimService.ApproveClaim(claimId);
-            return RedirectToAction("CoordinatorPage");
+            return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
 
-
+        // Reject a claim
         [HttpPost]
         public IActionResult RejectClaim(int claimId)
         {
-            _claimService.UpdateClaimStatus(claimId, "rejected");
-            return RedirectToAction("ReviewClaims");
+            _claimService.UpdateClaimStatus(claimId, "Rejected");
+            return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
     }
 }

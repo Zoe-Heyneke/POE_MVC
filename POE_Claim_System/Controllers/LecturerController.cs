@@ -1,10 +1,10 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using POE_Claim_System.Models;
-using Microsoft.AspNetCore.Http;
-using POE_Claim_System.Services; // Required for session access
+using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
+using POE_Claim_System.Services; // Your service that handles claims
 
 namespace POE_Claim_System.Controllers
 {
+    [Authorize(Roles = "Lecturer")] // Only allow Lecturers to access this controller
     public class LecturerController : Controller
     {
         private readonly ClaimService _claimService;
@@ -16,19 +16,14 @@ namespace POE_Claim_System.Controllers
 
         public IActionResult Index()
         {
-            // Ensure the user is logged in and is a Lecturer
-            var role = HttpContext.Session.GetString("Role");
-            if (role != "Lecturer")
+            var username = HttpContext.User.Identity.Name; // Get the logged-in user's username (or ID)
+            if (username == null)
             {
-                return RedirectToAction("Login", "Home");
+                return RedirectToAction("Login", "Login");
             }
 
-            // Get claims for the logged-in lecturer
-            var username = HttpContext.Session.GetString("Username");
-            var claims = _claimService.GetAllClaimsForUser(username);
-            return View(claims); // Create Index.cshtml for Lecturer
+            var claims = _claimService.GetAllClaimsForUser(username); // Retrieve claims for this user
+            return View(claims); // Return claims to the view
         }
-
-        // Add other actions like SubmitClaim etc., similarly checking the session and role.
     }
 }
