@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace POE_Claim_System.Models
 {
-    public class ClaimsContext : DbContext
+    public class ClaimsContext : IdentityDbContext<POE_Claim_SystemUser>
     {
         //constructor for ClaimsCOntext to accept Db
         public ClaimsContext(DbContextOptions<ClaimsContext> options)

@@ -1,53 +1,45 @@
 using Microsoft.EntityFrameworkCore;
-using POE_Claim_System.Models;  // Ensure this is the correct namespace for ClaimsContext and POE_Claim_SystemUser
-using POE_Claim_System.Services; // Ensure this is the correct namespace for ClaimService
-using Microsoft.AspNetCore.Identity;
-using POE_Claim_System.Data; // Ensure this is the correct namespace for POE_Claim_SystemAuthDBContext
+using POE_Claim_System.Models;
+using POE_Claim_System.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container (this replaces the old ConfigureServices method).
+// Add services to the container.
 builder.Services.AddControllersWithViews();
 
+// Register ClaimsContext which includes Identity
 builder.Services.AddDbContext<ClaimsContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
-
-builder.Services.AddDefaultIdentity<POE_Claim_SystemUser>(options => options.SignIn.RequireConfirmedAccount = true)
-    .AddEntityFrameworkStores<POE_Claim_SystemAuthDBContext>();
-
-// Register your DbContext (ClaimsContext) with the connection string from appsettings.json
-builder.Services.AddDbContext<ClaimsContext>(options =>
-{
     options.UseMySql(
-        builder.Configuration.GetConnectionString("DefaultConnection"),
-        new MySqlServerVersion(new Version(8, 0, 27)) // Use the version of your MySQL server
-    );
-});
+        builder.Configuration.GetConnectionString("YourConnectionString"),
+        new MySqlServerVersion(new Version(8, 0, 27))
+    ));
 
-// Register the ClaimService for Dependency Injection
+// Register Identity services using the same ClaimsContext
+builder.Services.AddDefaultIdentity<POE_Claim_SystemUser>(options => options.SignIn.RequireConfirmedAccount = true)
+    .AddEntityFrameworkStores<ClaimsContext>();
+
+// Register your ClaimService
 builder.Services.AddScoped<ClaimService>();
 
-// Building the app
 var app = builder.Build();
 
-// Configure the HTTP request pipeline (this replaces the old Configure method).
+// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseExceptionHandler("/Home/Error");
-    app.UseHsts();  // HSTS for production environments
+    app.UseHsts();
 }
 
-app.UseHttpsRedirection();  // Enforce HTTPS redirection
-app.UseStaticFiles();       // Serve static files from wwwroot
+app.UseHttpsRedirection();
+app.UseStaticFiles();
 
-app.UseRouting();           // Enable routing for incoming requests
+app.UseRouting();
 
-app.UseAuthentication();    // Enable authentication middleware (Identity)
-app.UseAuthorization();     // Enable authorization middleware
+app.UseAuthentication();  // Add authentication middleware
+app.UseAuthorization();   // Add authorization middleware
 
-// Set up the default controller route
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
-app.Run();  // Run the application
+app.Run();
