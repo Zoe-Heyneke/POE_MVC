@@ -3,7 +3,7 @@
     public class Role
     {
         public int Id { get; set; }
-        public string roleName { get; set; }
-        public DateTime timestamp { get; set; }
+        public string RoleName { get; set; }
+        public DateTime Timestamp { get; set; }
     }
 }
