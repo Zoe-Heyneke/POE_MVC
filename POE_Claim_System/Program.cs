@@ -8,6 +8,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add MVC services (controllers with views)
 builder.Services.AddControllersWithViews();
 
+builder.Services.AddDbContext<ClaimsContext>(options =>
+    options.UseSqlServer(builder.Configuration.GetConnectionString("YourConnectionString")));
+builder.Services.AddScoped<ClaimService>();
+
 // Register your DbContext (ClaimsContext) with the connection string from appsettings.json
 builder.Services.AddDbContext<ClaimsContext>(options =>
 {

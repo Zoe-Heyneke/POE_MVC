@@ -8,11 +8,12 @@ namespace POE_Claim_System.Controllers
     public class HomeController : Controller
     {
         private readonly ClaimService _claimService;
-        private readonly ClaimsContext _context;
+        private readonly ClaimsContext _context; // Replace with your actual DbContext
 
-        public HomeController(ClaimService claimService)
+        public HomeController(ClaimService claimService, ClaimsContext context)
         {
             _claimService = claimService;
+            _context = context; // Assign the context
         }
 
         [HttpGet]
@@ -24,10 +25,8 @@ namespace POE_Claim_System.Controllers
             if (ModelState.IsValid)
             {
                 _claimService.AddPerson(person); // Save person to DB
-
                 return RedirectToAction("Index", person.Role == "Lecturer" ? "Lecturer" : "CoordinatorManager");
             }
-
             return View("Index");
         }
 
@@ -44,18 +43,17 @@ namespace POE_Claim_System.Controllers
                 // Redirect based on role
                 if (user.Role == "Lecturer")
                 {
-                    return RedirectToAction("Index", "Lecturer"); // Assuming Index method in LecturerController
+                    return RedirectToAction("Index", "Lecturer");
                 }
                 else if (user.Role == "CM") // For Coordinator and Manager
                 {
-                    return RedirectToAction("Index", "Coordinator"); // Assuming Index method in CoordinatorController
+                    return RedirectToAction("Index", "Coordinator");
                 }
             }
 
             // Handle login failure
             ViewBag.ErrorMessage = "Invalid login attempt. Please try again.";
-            return View("Index"); // Return to Index page with error message
+            return View("Index");
         }
-
     }
 }
