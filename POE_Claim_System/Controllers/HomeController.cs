@@ -33,27 +33,44 @@ namespace POE_Claim_System.Controllers
         [HttpPost]
         public IActionResult LogIn(string username, string password, string role)
         {
-            var user = _context.Persons
+            try
+            {
+                var user = _context.Persons
                 .FirstOrDefault(p => p.Username == username && p.Password == password && p.Role == role);
 
-            if (user != null)
-            {
-                // Set user session or authentication cookie here if necessary
+                if (user != null)
+                {
+                    // Set user session or authentication cookie here if necessary
 
-                // Redirect based on role
-                if (user.Role == "Lecturer")
-                {
-                    return RedirectToAction("Index", "Lecturer");
+                    // Redirect based on role
+                    if (user.Role == "Lecturer")
+                    {
+                        return RedirectToAction("Index", "Lecturer");
+                    }
+                    else if (user.Role == "CM") // For Coordinator and Manager
+                    {
+                        return RedirectToAction("Index", "Coordinator");
+                    }
                 }
-                else if (user.Role == "CM") // For Coordinator and Manager
+                else
                 {
-                    return RedirectToAction("Index", "Coordinator");
+                    // Handle login failure
+                    ViewBag.ErrorMessage = "Invalid login attempt. Please try again.";
+                    return View("Index");
                 }
             }
-
-            // Handle login failure
-            ViewBag.ErrorMessage = "Invalid login attempt. Please try again.";
+            catch (Exception ex) 
+            {
+                // Log the exception (using a logging framework or Console)
+                Console.WriteLine($"Error: {ex.Message}");
+                ViewBag.ErrorMessage = "An error occurred while processing your request.";
+            }
             return View("Index");
+
+
+
+
+
         }
     }
 }
