@@ -5,7 +5,7 @@
 }
 
 <div class="text-center">
-    <h1 class="display-4">Welcome to</h1>
+    <h1 class="display-4">Welcome to the Contract Monthly Claim System (CMCS)</h1>
 
     <h2>Sign Up | Log In</h2>
 
@@ -37,8 +37,7 @@
                 <select asp-for="Role" class="form-control" required>
                     <option value="">Select Role</option>
                     <option value="Lecturer">Lecturer</option>
-                    <option value="Coordinator">Coordinator</option>
-                    <option value="Manager">Manager</option>
+                    <option value="CM">Coordinator and Manager</option>
                 </select>
             </div>
             <div class="form-group">
@@ -49,7 +48,7 @@
                 <label asp-for="Password"></label>
                 <input asp-for="Password" type="password" class="form-control" required />
             </div>
-            <button type="submit" class="btn btn-primary">Sign Up</button>
+            <button type="submit" class="btn btn-primary">Confirm Sign Up</button>
         </form>
     </div>
 
@@ -69,16 +68,15 @@
                 <select asp-for="Role" class="form-control" required>
                     <option value="">Select Role</option>
                     <option value="Lecturer">Lecturer</option>
-                    <option value="Coordinator">Coordinator</option>
-                    <option value="Manager">Manager</option>
+                    <option value="CM">Coordinator and Manager</option>
                 </select>
             </div>
-            <button type="submit" class="btn btn-primary">Log In</button>
+            <button type="submit" class="btn btn-primary">Confirm Log In</button>
         </form>
     </div>
 
-    <button onclick="toggleForms('signUp')">Sign Up</button>
-    <button onclick="toggleForms('logIn')">Log In</button>
+    <button onclick="toggleForms('back to signUp')">Sign Up</button>
+    <button onclick="toggleForms('back to logIn')">Log In</button>
 </div>
 
 <script>
