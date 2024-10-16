@@ -12,6 +12,7 @@
     <div id="signUpForm" style="display:none;">
         <h3>Sign Up</h3>
         <form asp-action="SignUp" method="post">
+            <!-- Sign-up fields here -->
             <div class="form-group">
                 <label asp-for="FirstName"></label>
                 <input asp-for="FirstName" class="form-control" required />
@@ -75,8 +76,8 @@
         </form>
     </div>
 
-    <button onclick="toggleForms('back to signUp')">Sign Up</button>
-    <button onclick="toggleForms('back to logIn')">Log In</button>
+    <button onclick="toggleForms('signUp')">Sign Up</button>
+    <button onclick="toggleForms('logIn')">Log In</button>
 </div>
 
 <script>
@@ -93,3 +94,4 @@
         }
     }
 </script>
+
