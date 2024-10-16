@@ -1,4 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using POE_Claim_System.Services;
 
@@ -7,6 +8,7 @@ namespace POE_Claim_System.Controllers
     public class HomeController : Controller
     {
         private readonly ClaimService _claimService;
+        private readonly ClaimsContext _context;
 
         public HomeController(ClaimService claimService)
         {
@@ -32,13 +34,28 @@ namespace POE_Claim_System.Controllers
         [HttpPost]
         public IActionResult LogIn(string username, string password, string role)
         {
-            if (_claimService.ValidateUser(username, password, role))
+            var user = _context.Persons
+                .FirstOrDefault(p => p.Username == username && p.Password == password && p.Role == role);
+
+            if (user != null)
             {
-                return RedirectToAction("Index", role == "Lecturer" ? "Lecturer" : "CoordinatorManager");
+                // Set user session or authentication cookie here if necessary
+
+                // Redirect based on role
+                if (user.Role == "Lecturer")
+                {
+                    return RedirectToAction("Index", "Lecturer"); // Assuming Index method in LecturerController
+                }
+                else if (user.Role == "CM") // For Coordinator and Manager
+                {
+                    return RedirectToAction("Index", "Coordinator"); // Assuming Index method in CoordinatorController
+                }
             }
 
-            ModelState.AddModelError("", "Invalid login attempt.");
-            return View("Index");
+            // Handle login failure
+            ViewBag.ErrorMessage = "Invalid login attempt. Please try again.";
+            return View("Index"); // Return to Index page with error message
         }
+
     }
 }

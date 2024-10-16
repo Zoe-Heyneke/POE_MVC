@@ -27,7 +27,7 @@ namespace POE_Claim_System.Controllers
 
             // Get claims for the logged-in user using username
             var claims = _claimService.GetAllClaimsForUser(username);
-            return View(claims);
+            return View("~/Views/Home/Lecturer.cshtml", claims);
         }
 
         // Action to display the form for submitting a claim
