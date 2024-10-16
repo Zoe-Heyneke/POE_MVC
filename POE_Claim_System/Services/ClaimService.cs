@@ -28,13 +28,18 @@ namespace POE_Claim_System.Services
 
         public bool ValidateUser(string username, string password, string role)
         {
-            if (string.IsNullOrEmpty(username) || string.IsNullOrEmpty(password) || string.IsNullOrEmpty(role))
+            try
             {
-                throw new ArgumentException("Username, password, and role must be provided.");
+                return _context.Persons.Any(p => p.Username == username && p.Password == password && p.Role == role);
             }
-
-            return _context.Persons.Any(p => p.Username == username && p.Password == password && p.Role == role);
+            catch (Exception ex)
+            {
+                // Log exception details
+                Console.WriteLine(ex.Message); // Replace with proper logging
+                return false;
+            }
         }
+
 
 
         public async Task AddClaimAsync(Claim claim)
