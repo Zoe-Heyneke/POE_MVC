@@ -78,6 +78,12 @@
 
     <button onclick="toggleForms('signUp')">Sign Up</button>
     <button onclick="toggleForms('logIn')">Log In</button>
+
+    <!-- Add Links to Lecturer and Coordinator Manager -->
+    <div class="mt-4">
+        <a href="@Url.Action("Index", "Lecturer")" class="btn btn-secondary">Lecturer</a>
+        <a href="@Url.Action("Index", "Coordinator")" class="btn btn-secondary">Coordinator Manager</a>
+    </div>
 </div>
 
 <script>
