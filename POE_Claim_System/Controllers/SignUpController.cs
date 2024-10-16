@@ -30,7 +30,7 @@ namespace POE_Claim_System.Controllers
                 if (_context.Users.Any(u => u.Username == model.Username))
                 {
                     ViewBag.Error = "Username already exists.";
-                    return View();
+                    return View(model);
                 }
 
                 var newUser = new User { Username = model.Username, Role = model.Role };
@@ -38,7 +38,7 @@ namespace POE_Claim_System.Controllers
 
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
-                return RedirectToAction("Login", "Login");
+                return RedirectToAction("Index", "Login");
             }
 
             return View(model);

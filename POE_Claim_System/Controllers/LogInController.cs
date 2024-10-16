@@ -22,7 +22,7 @@ namespace POE_Claim_System.Controllers
         }
 
         [HttpPost]
-        public IActionResult Login(LogIn model)
+        public IActionResult LogIn(LogIn model)
         {
             if (ModelState.IsValid)
             {

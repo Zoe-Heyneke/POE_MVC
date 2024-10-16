@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using POE_Claim_System.Services;
@@ -35,11 +36,16 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-app.UseAuthentication();  // Add authentication middleware
-app.UseAuthorization();   // Add authorization middleware
+// Ensure authentication and authorization middleware are added
+app.UseAuthentication();
+app.UseAuthorization();
 
+// Map controller routes
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+// Additional routes for account actions if necessary
+app.MapRazorPages(); // This is required if you're using Razor Pages for Identity
 
 app.Run();
