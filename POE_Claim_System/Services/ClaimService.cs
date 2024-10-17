@@ -1,5 +1,8 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Threading.Tasks;
 
 namespace POE_Claim_System.Services
 {
@@ -21,24 +24,16 @@ namespace POE_Claim_System.Services
                 .ToList();
         }
 
-        /*
-        public List<Claim> GetAllClaims()
+        public async Task<int> AddClaimAsync(Claim claim) // Updated to be asynchronous
         {
-            return _claimsContext.Claims.OrderByDescending(c => c.DateClaimed).ToList();
-        }
-        */
-
-
-        public int AddClaim(Claim claim)
-        {
-            var rate = _claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
+            var rate = await _claimsContext.Rates.FirstOrDefaultAsync(x => x.PersonId == claim.PersonId); // Use async method
             if (rate != null)
             {
                 claim.Rate = rate.HourlyRate;
                 double totalFee = claim.TotalHours * claim.Rate;
                 claim.TotalFee = totalFee;
-                _claimsContext.Claims.Add(claim);
-                _claimsContext.SaveChanges();
+                await _claimsContext.Claims.AddAsync(claim); // Use async method for adding the claim
+                await _claimsContext.SaveChangesAsync(); // Use async method for saving changes
                 return claim.Id;
             }
             return 0;
@@ -70,7 +65,6 @@ namespace POE_Claim_System.Services
             var claims = _claimsContext.Claims.Where(x => x.PersonId == person.Id).ToList();
             return claims.OrderByDescending(x => x.DateClaimed).ThenBy(x => x.StatusId).ToList();
         }
-
 
         // New Methods
 
