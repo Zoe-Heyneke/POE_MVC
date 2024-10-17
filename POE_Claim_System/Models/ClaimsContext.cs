@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 
 namespace POE_Claim_System.Models
 {
-    public class ClaimsContext : IdentityDbContext<POE_Claim_SystemUser>
+    public class ClaimsContext : DbContext
     {
         //constructor for ClaimsCOntext to accept Db
         public ClaimsContext(DbContextOptions<ClaimsContext> options)
@@ -32,7 +32,8 @@ namespace POE_Claim_System.Models
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
             //connection string
-            optionsBuilder.UseMySQL("server=localhost;database=Claims_DB;user=root;password=");
+         //   optionsBuilder.UseMySQL("server=localhost;database=Claims_DB;user=root;password=");
+         optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
         }
 
 

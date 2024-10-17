@@ -6,7 +6,6 @@
 
         //config table
         public int Id { get; set; } 
-        public int PersonId { get; set; }
         public double HourlyRate {  get; set; }
     }
 }

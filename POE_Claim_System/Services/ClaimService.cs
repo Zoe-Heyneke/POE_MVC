@@ -13,6 +13,7 @@ namespace POE_Claim_System.Services
         public ClaimService(ClaimsContext claimsContext)
         {
             _claimsContext = claimsContext; // Injected via DI
+            _claimsContext.Database.EnsureCreated();
         }
 
         public List<Claim> GetAllClaims()
@@ -26,7 +27,7 @@ namespace POE_Claim_System.Services
 
         public async Task<int> AddClaimAsync(Claim claim) // Updated to be asynchronous
         {
-            var rate = await _claimsContext.Rates.FirstOrDefaultAsync(x => x.PersonId == claim.PersonId); // Use async method
+            var rate = await _claimsContext.Rates.FirstOrDefaultAsync(); // Use async method
             if (rate != null)
             {
                 claim.Rate = rate.HourlyRate;
@@ -56,7 +57,7 @@ namespace POE_Claim_System.Services
 
         public List<Claim> GetAllClaimsForUser(string username)
         {
-            var person = _claimsContext.Persons.FirstOrDefault(p => p.Username == username); // Assuming a Persons table has Username field
+            var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username); // Assuming a Persons table has Username field
             if (person == null)
             {
                 return new List<Claim>(); // Return an empty list if no person is found

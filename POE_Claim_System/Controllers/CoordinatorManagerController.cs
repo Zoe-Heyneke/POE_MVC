@@ -4,7 +4,7 @@ using POE_Claim_System.Services; // Your service that handles claims
 
 namespace POE_Claim_System.Controllers
 {
-    [Authorize(Roles = "Coordinator")] // Only allow Coordinators to access this controller
+
     public class CoordinatorManagerController : Controller
     {
         private readonly ClaimService _claimService;

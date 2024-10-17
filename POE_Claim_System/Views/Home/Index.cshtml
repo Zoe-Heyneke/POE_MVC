@@ -15,82 +15,17 @@
 <div class="text-center">
     <h1 class="display-4">Welcome to the Contract Monthly Claim System (CMCS)</h1>
 
-
-
     <h2>Sign Up | Log In</h2>
 
-    <!-- Sign Up Form -->
-    <div id="signUpForm" style="display:none;">
-        <h3>Sign Up</h3>
-        <form asp-action="SignUp" method="post">
-            <div class="form-group">
-                <label asp-for="FirstName"></label>
-                <input asp-for="FirstName" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="LastName"></label>
-                <input asp-for="LastName" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="EmailAddress"></label>
-                <input asp-for="EmailAddress" type="email" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="ContactNumber"></label>
-                <input asp-for="ContactNumber" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="StaffNumber"></label>
-                <input asp-for="StaffNumber" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="Role"></label>
-                <select asp-for="Role" class="form-control" required>
-                    <option value="">Select Role</option>
-                    <option value="Lecturer">Lecturer</option>
-                    <option value="CM">Coordinator and Manager</option>
-                </select>
-            </div>
-            <div class="form-group">
-                <label asp-for="Username"></label>
-                <input asp-for="Username" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" type="password" class="form-control" required />
-            </div>
-            <button type="submit" class="btn btn-primary">Confirm Sign Up</button>
-        </form>
-    </div>
-
-    <!-- Log In Form -->
-    <div id="logInForm" style="display:none;">
-        <h3>Log In</h3>
-        <form asp-action="LogIn" method="post">
-            <div class="form-group">
-                <label asp-for="Username"></label>
-                <input asp-for="Username" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" type="password" class="form-control" required />
-            </div>
-            <div class="form-group">
-                <label asp-for="Role"></label>
-                <select asp-for="Role" class="form-control" required>
-                    <option value="">Select Role</option>
-                    <option value="Lecturer">Lecturer</option>
-                    <option value="CM">Coordinator and Manager</option>
-                </select>
-            </div>
-            <button type="submit" class="btn btn-primary">Confirm Log In</button>
-        </form>
-    </div>
+    <nav class="navbar navbar-light bg-light">
+        <a class="navbar-brand" href="#">@Html.ActionLink("SignUpView", "SignUpView", "SignUp", new { area = "" }, new { })</a>
+        <a class="navbar-brand" href="#">@Html.ActionLink("LogInView", "LogInView", "LogIn", new { area = "" }, new { })</a>
+    </nav>
 
     <!-- Buttons to toggle between Sign Up and Log In -->
     <div class="mt-4">
-        <button class="btn btn-primary" onclick="toggleForms('signUp')">Sign Up</button>
-        <button class="btn btn-secondary" onclick="toggleForms('logIn')">Log In</button>
+        <a href="/Home/Signup" class="btn btn-primary">Sign Up</a>
+        <a href="/Home/LogIn" class="btn btn-secondary" >Log In</a>
     </div>
 </div>
 

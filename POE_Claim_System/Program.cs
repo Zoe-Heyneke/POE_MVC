@@ -8,13 +8,15 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllersWithViews();
 
 // Register ClaimsContext which includes Identity
+/*
 builder.Services.AddDbContext<ClaimsContext>(options =>
     options.UseMySql(
         builder.Configuration.GetConnectionString("YourConnectionString"),
         new MySqlServerVersion(new Version(8, 0, 27))
     ));
-
+*/
 // Register your ClaimService
+builder.Services.AddDbContext<ClaimsContext>();
 builder.Services.AddScoped<ClaimService>();
 
 builder.Services.AddSession(options =>
@@ -42,6 +44,7 @@ app.UseRouting();
 app.UseAuthentication(); // Uncomment if using authentication later
 app.UseAuthorization();  // Ensure this is included
 
+app.UseSession();
 // Map controller routes
 app.MapControllerRoute(
     name: "default",
