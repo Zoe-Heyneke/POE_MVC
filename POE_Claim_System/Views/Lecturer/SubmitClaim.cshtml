@@ -1,4 +1,4 @@
-﻿@model POE_Claim_System.Models.Claim
+﻿@model POE_Claim_System.Models.ClaimView
 
 @{
     ViewData["Title"] = "Lecturer Claim Submission";
@@ -13,24 +13,6 @@
     <h2 class="text-center">Claim Submission</h2>
 
     <form asp-action="SubmitClaim" asp-controller="Submit" method="post" enctype="multipart/form-data">
-        <!-- Lecturer Section -->
-        <div class="mt-4">
-            <h4>--Lecturer--</h4>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="lecturerName">Lecturer Name:</label>
-                        <input asp-for="Person.FirstName" id="lecturerName" class="form-control" placeholder="Enter your first name" />
-                    </div>
-                </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="lecturerSurname">Lecturer Surname:</label>
-                        <input asp-for="Person.LastName" id="lecturerSurname" class="form-control" placeholder="Enter your surname" />
-                    </div>
-                </div>
-            </div>
-        </div>
 
         <!-- Course Section -->
         <div class="mt-4">
@@ -39,13 +21,17 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="courseCode">Course Code:</label>
-                        <input asp-for="Course.CourseCode" id="courseCode" name="courseCode" class="form-control" placeholder="Enter course code" />
+                        <select class="form-select form-select-solid" data-control="select2" asp-for="CourseId" asp-items="Model.Courses" data-hide-search="false">
+                            <option value="0">Please select</option>
+                        </select>
                     </div>
                 </div>
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="groupNumber">Group Number:</label>
-                        <input asp-for="Course.Group" id="groupNumber" name="groupNumber" class="form-control" placeholder="Enter group number" />
+                        <select class="form-select form-select-solid" data-control="select2" asp-for="ClassId" asp-items="Model.Classes" data-hide-search="false">
+                            <option value="0">Please select</option>
+                        </select>
                     </div>
                 </div>
             </div>
@@ -61,33 +47,15 @@
                         <input asp-for="TotalHours" id="totalHours" name="totalHours" class="form-control" placeholder="Enter total hours worked" />
                     </div>
                 </div>
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="hourlyRate">Hourly Rate:</label>
-                        <select asp-for="Rate" id="hourlyRate" name="hourlyRate" class="form-control">
-                            <option value="200">200</option>
-                            <option value="250">250</option>
-                            <option value="300">300</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-            <div class="row">
-                <div class="col-md-6">
-                    <div class="form-group">
-                        <label for="totalFee">Total Fee:</label>
-                        <input asp-for="TotalFee" id="totalFee" name="totalFee" class="form-control" readonly />
-                    </div>
-                </div>
             </div>
         </div>
 
-        <!-- Documents Section -->
+        <!-- Documents Section (asp creates name)-->
         <div class="mt-4">
             <h4>--Documents--</h4>
             <div class="form-group">
                 <label for="uploadDocument">Choose a Document to Upload:</label>
-                <input asp-for="DocumentPath" type="file" id="uploadDocument" name="uploadDocument" class="form-control-file" />
+                <input asp-for="Document" type="file"  class="form-control-file" /> 
             </div>
         </div>
 
@@ -107,17 +75,3 @@
     </form>
 </div>
 
-<!-- JavaScript for calculating Total Fee -->
-@section Scripts {
-    <script type="text/javascript">
-        document.getElementById('totalHours').addEventListener('input', calculateTotalFee);
-        document.getElementById('hourlyRate').addEventListener('change', calculateTotalFee);
-
-        function calculateTotalFee() {
-            var hours = parseFloat(document.getElementById('totalHours').value) || 0;
-            var rate = parseFloat(document.getElementById('hourlyRate').value) || 0;
-            var totalFee = hours * rate;
-            document.getElementById('totalFee').value = totalFee.toFixed(2);
-        }
-    </script>
-}

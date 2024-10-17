@@ -2,6 +2,7 @@
 using POE_Claim_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using POE_Claim_System.Models.Data;
 
 namespace POE_Claim_System.Models
 {
@@ -19,6 +20,8 @@ namespace POE_Claim_System.Models
         public DbSet<Person> Persons { get; set; }
 
         public DbSet<Course> Courses { get; set; }
+
+        public DbSet<Class> Classes { get; set; }
 
         public DbSet<ClaimStatus> ClaimStatuses { get; set; }
 
@@ -54,7 +57,10 @@ namespace POE_Claim_System.Models
                 entity.HasOne(c => c.Course).WithMany().HasForeignKey(c => c.CourseId);
             });
 
-            modelBuilder.Entity<Course>().HasKey(c => c.Id);
+            modelBuilder.ApplyConfiguration(new RateConfiguration());
+            modelBuilder.ApplyConfiguration(new StatusConfiguration());
+            modelBuilder.ApplyConfiguration(new ClassConfiguration());
+            modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
         }
 

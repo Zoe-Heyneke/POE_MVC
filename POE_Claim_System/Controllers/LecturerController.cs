@@ -10,10 +10,14 @@ namespace POE_Claim_System.Controllers
         private readonly ClaimService _claimService;
         private readonly string _uploadFolderPath;
 
+        ClaimsContext claimsContext;
+
         // Constructor injection for the claim service
         public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment)
         {
             _claimService = claimService;
+            claimsContext = new ClaimsContext();
+
 
             // Set the upload path to wwwroot/uploads
             _uploadFolderPath = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
@@ -38,6 +42,9 @@ namespace POE_Claim_System.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> SubmitClaim(Claim claim, IFormFile uploadDocument)
         {
+            //add claim
+
+
             if (ModelState.IsValid)
             {
                 // Handle file upload
