@@ -44,7 +44,7 @@ namespace POE_Claim_System.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //specify relationships
-            base.OnModelCreating(modelBuilder);
+            
             modelBuilder.Entity<Person>().HasKey(p => p.Id);
 
             modelBuilder.Entity<Claim>(entity =>
@@ -62,6 +62,7 @@ namespace POE_Claim_System.Models
             modelBuilder.ApplyConfiguration(new ClassConfiguration());
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
+            base.OnModelCreating(modelBuilder);
         }
 
 

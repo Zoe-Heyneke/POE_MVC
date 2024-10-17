@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization; // Required for [Authorize]
 using POE_Claim_System.Services;
-using POE_Claim_System.Models; // Your service that handles claims
+using POE_Claim_System.Models;
+using Microsoft.AspNetCore.Mvc.Rendering; // Your service that handles claims
 
 namespace POE_Claim_System.Controllers
 {
@@ -10,14 +11,14 @@ namespace POE_Claim_System.Controllers
         private readonly ClaimService _claimService;
         private readonly string _uploadFolderPath;
 
-        ClaimsContext claimsContext;
+        ClaimsContext _claimsContext;
 
         // Constructor injection for the claim service
-        public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment)
+        public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment, ClaimsContext claimsContext)
         {
             _claimService = claimService;
-            claimsContext = new ClaimsContext();
-
+            _claimsContext = claimsContext;
+            _claimsContext.Database.EnsureCreated();
 
             // Set the upload path to wwwroot/uploads
             _uploadFolderPath = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
@@ -35,7 +36,13 @@ namespace POE_Claim_System.Controllers
         [HttpGet]
         public IActionResult SubmitClaim()
         {
-            return View();
+            var model = new ClaimView();
+
+            var courses = _claimsContext.Courses.ToList();
+            var classes = _claimsContext.Classes.ToList();
+            model.Courses = new SelectList(courses, "Id", "Name");
+            model.Classes = new SelectList(classes, "Id", "ClassName");
+            return View(model);
         }
 
         [HttpPost]
