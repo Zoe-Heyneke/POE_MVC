@@ -1,4 +1,5 @@
-﻿using POE_Claim_System.Models;
+﻿using Microsoft.EntityFrameworkCore;
+using POE_Claim_System.Models;
 
 namespace POE_Claim_System.Services
 {
@@ -11,7 +12,24 @@ namespace POE_Claim_System.Services
             _claimsContext = claimsContext; // Injected via DI
         }
 
-        public int AddNewClaim(Claim claim)
+        public List<Claim> GetAllClaims()
+        {
+            return _claimsContext.Claims
+                .Include(c => c.Person)   // If you need to include related entities like Person
+                .Include(c => c.Course)   // Include related course details
+                .OrderByDescending(c => c.DateClaimed)
+                .ToList();
+        }
+
+        /*
+        public List<Claim> GetAllClaims()
+        {
+            return _claimsContext.Claims.OrderByDescending(c => c.DateClaimed).ToList();
+        }
+        */
+
+
+        public int AddClaim(Claim claim)
         {
             var rate = _claimsContext.Rates.FirstOrDefault(x => x.PersonId == claim.PersonId);
             if (rate != null)

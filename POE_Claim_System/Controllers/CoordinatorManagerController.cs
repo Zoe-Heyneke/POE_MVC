@@ -14,11 +14,13 @@ namespace POE_Claim_System.Controllers
             _claimService = claimService;
         }
 
+
+
         // Display all pending claims for review
         public IActionResult Index()
         {
             var pendingClaims = _claimService.GetPendingClaims();
-            return View(pendingClaims); // View to show all pending claims
+            return View("ViewClaim", pendingClaims); // View to show all pending claims
         }
 
         // Approve a claim

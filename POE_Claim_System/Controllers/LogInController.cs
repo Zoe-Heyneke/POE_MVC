@@ -36,11 +36,11 @@ namespace POE_Claim_System.Controllers
                     // Redirect based on role
                     if (user.Role == "Lecturer")
                     {
-                        return RedirectToAction("Index", "Lecturer");
+                        return RedirectToAction("SubmitClaim", "Lecturer");
                     }
                     else if (user.Role == "Coordinator")
                     {
-                        return RedirectToAction("Index", "CoordinatorManager");
+                        return RedirectToAction("ViewClaim", "CoordinatorManager");
                     }
                 }
 

@@ -38,7 +38,7 @@ namespace POE_Claim_System.Controllers
 
                 _context.Users.Add(newUser);
                 _context.SaveChanges();
-                return RedirectToAction("Index", "Login");
+                return RedirectToAction("Index", "LogIn");
             }
 
             return View(model);

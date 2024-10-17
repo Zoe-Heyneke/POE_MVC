@@ -11,6 +11,16 @@ namespace POE_Claim_System.Controllers
         {
             return View();
         }
+
+        public IActionResult SubmitClaim()
+        {
+            return View();
+        }
+
+        public IActionResult ViewClaim()
+        {
+            return View();
+        }
     }
     
 
