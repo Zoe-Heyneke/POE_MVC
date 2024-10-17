@@ -16,7 +16,6 @@ namespace POE_Claim_System.Models.Data
                     HourlyRate = 1000,
                 }
                 );
-            //
         }
     }
 }
