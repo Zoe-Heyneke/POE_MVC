@@ -19,8 +19,8 @@ namespace POE_Claim_System.Services
         public List<Claim> GetAllClaims()
         {
             return _claimsContext.Claims
-                .Include(c => c.Person)   // If you need to include related entities like Person
-                .Include(c => c.Course)   // Include related course details
+                .Include(c => c.Person)   
+                .Include(c => c.Course)   
                 .OrderByDescending(c => c.DateClaimed)
                 .ToList();
         }
@@ -57,17 +57,17 @@ namespace POE_Claim_System.Services
 
         public List<Claim> GetAllClaimsForUser(string username)
         {
-            var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username); // Assuming a Persons table has Username field
+            var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username); 
             if (person == null)
             {
-                return new List<Claim>(); // Return an empty list if no person is found
+                return new List<Claim>(); 
             }
 
             var claims = _claimsContext.Claims.Where(x => x.PersonId == person.Id).ToList();
             return claims.OrderByDescending(x => x.DateClaimed).ThenBy(x => x.StatusId).ToList();
         }
 
-        // New Methods
+        
 
         // Get all pending claims
         public List<Claim> GetPendingClaims()

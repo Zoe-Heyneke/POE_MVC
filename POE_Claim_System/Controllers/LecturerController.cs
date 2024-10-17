@@ -59,11 +59,11 @@ namespace POE_Claim_System.Controllers
                 // Save the claim using your service
                 await _claimService.AddClaimAsync(claim); // Call the async method
 
-                // Redirect to the ViewClaims method after successfully submitting the claim
-                return RedirectToAction("Index");
+                // Redirect to the view all their claims after successfully submitting the claim
+                return RedirectToAction("~/Views/Home/Lecturer/Index.cshtml", claim);
             }
 
-            // If there is an issue with the submission, return to the form (with errors)
+            // If there is an issue with the submission, return to the form 
             return View();
         }
     }

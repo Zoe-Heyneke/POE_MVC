@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿/*
+
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
-using POE_Claim_System.Models;  // Your Claim model
-using POE_Claim_System.Services;  // Your ClaimService
+using POE_Claim_System.Models;  
+using POE_Claim_System.Services;  
 using System.IO;
 using System.Threading.Tasks;
 
@@ -66,6 +68,7 @@ public class SubmitController : Controller
 
     public IActionResult Success()
     {
-        return View(); // Create a Success view to confirm submission
+        return View(); 
     }
 }
+*/
