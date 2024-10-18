@@ -82,7 +82,7 @@ namespace POE_Claim_System.Controllers
                     }
                     else if (user.Role == "Coordinator")
                     {
-                        return RedirectToAction("ViewClaim", "CoordinatorManager");
+                        return RedirectToAction("Index", "CoordinatorManager");
                     }
                 }
 

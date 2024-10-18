@@ -54,8 +54,21 @@ public class DataSeeder
                     CourseCode = "AD100",
                     Name = "Advanced Databases",
                     Timestamp = DateTime.UtcNow,
-                }
-
+                },
+                new Course
+                  {
+                      Id = 3,
+                      CourseCode = "WEDE6021",
+                      Name = "Web Development (Intermediate)",
+                      Timestamp = DateTime.UtcNow,
+                  },
+                  new Course
+                  {
+                      Id = 4,
+                      CourseCode = "SOEN6222",
+                      Name = "Software Engineering",
+                      Timestamp = DateTime.UtcNow,
+                  }
             };
 
             _context.Courses.AddRange(courses);
