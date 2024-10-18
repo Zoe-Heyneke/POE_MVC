@@ -1,4 +1,4 @@
-/*
+
 
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
@@ -7,6 +7,8 @@ namespace POE_Unit_Tests
 {
     public class UnitTest1
     {
+        private ClaimsContext _mockClaimsContext;
+
         [Fact]
         /*
         public void Test1()
@@ -18,7 +20,7 @@ namespace POE_Unit_Tests
         }
         */
 
-        /*
+
         public void Test_AddNewClaim()
         {
             var claimService = new ClaimService();
@@ -29,7 +31,7 @@ namespace POE_Unit_Tests
                 PersonId = 1
             };
 
-            var claimId = claimService.AddNewClaim(claim);
+            var claimId = claimService.AddClaimAsync(claim);
 
             Assert.True(claimId > 0);
         }
@@ -42,11 +44,10 @@ namespace POE_Unit_Tests
 
             claimService.UpdateClaimStatus(claimId, "approved");
 
-            var updatedClaim = claimService.GetClaimById(claimId);
+            var updatedClaim = claimService.ApproveClaim(claimId);
             Assert.Equal("approved", updatedClaim.ClaimStatus.Status);
         }
 
-        /*
         [Fact]
         public void Test_GetClaimById()
         {
@@ -54,10 +55,14 @@ namespace POE_Unit_Tests
 
             // Assume claimId 1 exists in the mocked database
             var claimId = 1;
-            var claim = claimService.GetClaimById(claimId);
+            var claim = claimService.GetAllClaimsForUser(personId);
 
             Assert.NotNull(claim);  // Check that the claim exists
             Assert.Equal(claimId, claim.Id);  // Check that the correct claim is returned
         }
-        */
+    }
+}
+        
+        
+        
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿/*
+using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -105,3 +106,4 @@ namespace POE_Claim_System.Services
         }
     }
 }
+*/
