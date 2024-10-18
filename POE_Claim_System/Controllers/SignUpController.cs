@@ -33,7 +33,7 @@ namespace POE_Claim_System.Controllers
                     return View(model);
                 }
 
-                var newUser = new User { Username = model.Username, Role = model.Role };
+                var newUser = new User { Username = model.Username, RoleName = model.RoleName };
                 newUser.Password = _passwordHasher.HashPassword(newUser, model.Password); // Hash the password
 
                 _context.Users.Add(newUser);

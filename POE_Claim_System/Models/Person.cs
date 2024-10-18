@@ -15,7 +15,7 @@ namespace POE_Claim_System.Models
         public string StaffNumber { get; set; }
 
         
-        public string Role {  get; set; }
+        public string RoleName {  get; set; }
         public string Password {  get; set; }
 
         public DateTime Timestamp { get; set; }

@@ -13,6 +13,6 @@ namespace POE_Claim_System.Models
         public string Password { get; set; }
 
         [Required]
-        public string Role { get; set; }
+        public string RoleName { get; set; }
     }
 }

@@ -11,6 +11,7 @@ public class ClaimViewModel
     public int CourseId { get; set; }
     public int ClassId { get; set; }
     public int StatusId { get; set; }
+    public string Status { get; set; }
     public DateTime DateClaimed { get; set; }
     public string CourseCode { get; set; }
     public string CourseName { get; set; }

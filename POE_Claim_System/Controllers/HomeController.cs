@@ -37,11 +37,12 @@ namespace POE_Claim_System.Controllers
             return View();
         }
 
+        /*
         public IActionResult ViewClaim()
         {
             return View();
         }
-
+        */
         [HttpPost]
         public IActionResult Signup(Person person)
         {
@@ -53,7 +54,7 @@ namespace POE_Claim_System.Controllers
             person.Timestamp = DateTime.Now;
             _context.Persons.Add(person);
             _context.SaveChanges();
-            var newUser = new User { Username = person.EmailAddress, Role = person.Role };
+            var newUser = new User { Username = person.EmailAddress, RoleName = person.RoleName };
             newUser.Password = person.Password; // Hash the password
 
             _context.Users.Add(newUser);
@@ -68,19 +69,19 @@ namespace POE_Claim_System.Controllers
         {
             if (ModelState.IsValid)
             {
-                var user = _context.Users.FirstOrDefault(u => u.Username == model.Username);
+                var user = _context.Users.FirstOrDefault(u => u.Username == model.Username && u.Password == model.Password);
                 if (user != null)
                 {
                     // Store user info in session
                     HttpContext.Session.SetString("Username", user.Username);
-                    HttpContext.Session.SetString("Role", user.Role);
+                    HttpContext.Session.SetString("Role", user.RoleName);
 
                     // Redirect based on role
-                    if (user.Role == "Lecturer")
+                    if (user.RoleName == "Lecturer")
                     {
                         return RedirectToAction("Index", "Lecturer");
                     }
-                    else if (user.Role == "CoordinatorManager")
+                    else if (user.RoleName == "CoordinatorManager")
                     {
                         return RedirectToAction("Index", "CoordinatorManager");
                     }

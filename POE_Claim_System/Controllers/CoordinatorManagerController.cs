@@ -20,7 +20,7 @@ namespace POE_Claim_System.Controllers
         public IActionResult Index()
         {
             var pendingClaims = _claimService.GetPendingClaims();
-            return View("ViewClaim", pendingClaims); // View to show all pending claims
+            return View(pendingClaims); // View to show all pending claims
         }
 
         // Approve a claim
