@@ -105,16 +105,12 @@ namespace POE_Claim_System.Controllers
 
         //insert track directory to view status
 
-        public IActionResult ApproveClaim(int id)
+        public IActionResult Track(int id)
         {
-            _claimService.UpdateClaimStatus(id, "Approved");
-            return RedirectToAction("Track");
+            var username = User.Identity.Name;
+            var claims = _claimService.GetAllClaimsForLecturer(username);
+            return View(claims);
         }
 
-        public IActionResult RejectClaim(int id)
-        {
-            _claimService.UpdateClaimStatus(id, "Rejected");
-            return RedirectToAction("Track");
-        }
     }
 }

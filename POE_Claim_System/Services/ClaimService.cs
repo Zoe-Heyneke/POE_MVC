@@ -42,6 +42,7 @@ namespace POE_Claim_System.Services
                               PersonId = c.PersonId,
                               AdditionalNotes = c.AdditionalNotes,
                               DocumentPath = c.DocumentPath
+                              
                           }
                 ).OrderByDescending(x => x.DateClaimed).ToList();
             return claims;
@@ -77,7 +78,7 @@ namespace POE_Claim_System.Services
             return claim.Id;
         }
 
-        public List<ClaimViewModel> GetAllClaimsForUser(string username)
+        public List<ClaimViewModel> GetAllClaimsForLecturer(string username)
         {
             var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username);
             if (person == null)
@@ -108,7 +109,8 @@ namespace POE_Claim_System.Services
                               StatusId = c.StatusId,
                               PersonId = c.PersonId,
                               AdditionalNotes = c.AdditionalNotes,
-                              DocumentPath = c.DocumentPath
+                              DocumentPath = c.DocumentPath,
+                              Status = s.Status
                           }
                 ).OrderByDescending(x => x.DateClaimed).ToList();
 
@@ -170,15 +172,15 @@ namespace POE_Claim_System.Services
             {
                 if (status == "Rejected")
                 {
-                    claim.StatusId = 3; // Assuming StatusId = 3 is 'Rejected'
+                    claim.StatusId = 3; //Rejected
                 }
                 else if (status == "Approved")
                 {
-                    claim.StatusId= 2;
+                    claim.StatusId= 2;  //approved
                 }
                 else
                 {
-                    claim.StatusId= 1;
+                    claim.StatusId= 1;  //pending
                 }
                 _claimsContext.SaveChanges();
             }
