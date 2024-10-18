@@ -13,7 +13,7 @@ namespace POE_Claim_System.Models.Data
                 new Rate
                 {
                     Id = 1,
-                    HourlyRate = 1000,
+                    HourlyRate = 800,
                 }
                 );
         }
