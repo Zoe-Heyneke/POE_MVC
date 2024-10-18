@@ -80,7 +80,7 @@ namespace POE_Claim_System.Controllers
                     {
                         return RedirectToAction("Index", "Lecturer");
                     }
-                    else if (user.Role == "Coordinator")
+                    else if (user.Role == "CoordinatorManager")
                     {
                         return RedirectToAction("Index", "CoordinatorManager");
                     }
