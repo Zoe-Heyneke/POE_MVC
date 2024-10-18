@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Identity; // Required for Session
 
 namespace POE_Claim_System.Controllers
 {
-   
+
     public class HomeController : Controller
     {
 
@@ -50,15 +50,15 @@ namespace POE_Claim_System.Controllers
                 ViewBag.Error = "Username already exists.";
                 return View("LogIn");
             }
-            person.Timestamp= DateTime.Now;
+            person.Timestamp = DateTime.Now;
             _context.Persons.Add(person);
             _context.SaveChanges();
             var newUser = new User { Username = person.EmailAddress, Role = person.Role };
-            newUser.Password =  person.Password; // Hash the password
+            newUser.Password = person.Password; // Hash the password
 
             _context.Users.Add(newUser);
             _context.SaveChanges();
-    
+
             return View("Index");
         }
 
@@ -78,7 +78,7 @@ namespace POE_Claim_System.Controllers
                     // Redirect based on role
                     if (user.Role == "Lecturer")
                     {
-                        return RedirectToAction("SubmitClaim", "Lecturer");
+                        return RedirectToAction("Index", "Lecturer");
                     }
                     else if (user.Role == "Coordinator")
                     {
@@ -92,6 +92,6 @@ namespace POE_Claim_System.Controllers
             return View(model);
         }
     }
-    
+
 
 }

@@ -14,11 +14,13 @@ namespace POE_Claim_System.Controllers
         ClaimsContext _claimsContext;
 
         // Constructor injection for the claim service
-        public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment, ClaimsContext claimsContext)
+        public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment,
+            ClaimsContext claimsContext)
         {
+            claimsContext.Database.EnsureCreated();
             _claimService = claimService;
             _claimsContext = claimsContext;
-            _claimsContext.Database.EnsureCreated();
+
 
             // Set the upload path to wwwroot/uploads
             _uploadFolderPath = Path.Combine(webHostEnvironment.WebRootPath, "uploads");
@@ -30,14 +32,19 @@ namespace POE_Claim_System.Controllers
             }
         }
 
-        public IActionResult Index() { return View(); }
+        public IActionResult Index()
+        {
+            var userName = HttpContext.Session.GetString("Username");
+            var claims = _claimService.GetAllClaimsForUser(userName);
+            return View(claims);
+        }
 
 
         [HttpGet]
         public IActionResult SubmitClaim()
         {
             var model = new ClaimView();
-
+            _claimsContext.Database.EnsureCreated();
             var courses = _claimsContext.Courses.ToList();
             var classes = _claimsContext.Classes.ToList();
             model.Courses = new SelectList(courses, "Id", "Name");
@@ -47,38 +54,53 @@ namespace POE_Claim_System.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> SubmitClaim(Claim claim, IFormFile uploadDocument)
+        public async Task<IActionResult> SubmitClaim(ClaimView model)
         {
             //add claim
 
-
+            var userName = HttpContext.Session.GetString("Username");
+            var user = _claimsContext.Persons.FirstOrDefault(x => x.EmailAddress == userName);
             if (ModelState.IsValid)
             {
+                var claim = new Claim
+                {
+                    DateClaimed = DateTime.Now,
+                    StartDate = DateOnly.FromDateTime(DateTime.Now),
+                    EndDate = DateOnly.FromDateTime(DateTime.Now),
+                    PersonId = user?.Id ?? 0,
+                    CourseId = model.CourseId,
+                    ClassId = model.ClassId,
+                    StatusId = 1, //1 is pending
+                    AdditionalNotes = model.AdditionalNotes,
+                    TotalHours = model.TotalHours,
+                };
+                // claim.DateClaimed=DateTime.Now;
+
                 // Handle file upload
-                if (uploadDocument != null && uploadDocument.Length > 0)
+                if (model.Document != null && model.Document.Length > 0)
                 {
                     // Define the path where you want to save the file in wwwroot/uploads
-                    var filePath = Path.Combine(_uploadFolderPath, uploadDocument.FileName);
+                    var filePath = Path.Combine(_uploadFolderPath, model.Document.FileName);
 
                     // Save the file to the server
                     using (var stream = new FileStream(filePath, FileMode.Create))
                     {
-                        await uploadDocument.CopyToAsync(stream);
+                        await model.Document.CopyToAsync(stream);
                     }
 
                     // Save the file path in the claim model (make sure this path is suitable for storage)
-                    claim.DocumentPath = $"uploads/{uploadDocument.FileName}"; // Relative path to store in the database
+                    claim.DocumentPath = $"uploads/{model.Document.FileName}"; // Relative path to store in the database
                 }
 
                 // Save the claim using your service
                 await _claimService.AddClaimAsync(claim); // Call the async method
 
                 // Redirect to the view all their claims after successfully submitting the claim
-                return RedirectToAction("~/Views/Home/Lecturer/Index.cshtml", claim);
+                return RedirectToAction("Index");
             }
 
             // If there is an issue with the submission, return to the form 
-            return View();
+            return View(model);
         }
     }
 }

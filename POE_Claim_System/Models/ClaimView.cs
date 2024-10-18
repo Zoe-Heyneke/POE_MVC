@@ -8,9 +8,9 @@ namespace POE_Claim_System.Models
     {
         public int Id { get; set; }
         public int CourseId { get; set; }
-        public double TotalHours { get; set; }
-        public int ClassId { get; set; }    
-       
+        public int TotalHours { get; set; }
+        public int ClassId { get; set; }
+
         public string AdditionalNotes { get; set; }
         public IFormFile Document { get; set; }
         public SelectList? Courses { get; set; }

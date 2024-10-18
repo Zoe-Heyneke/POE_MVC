@@ -1,5 +1,4 @@
-﻿/*
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,17 +12,39 @@ namespace POE_Claim_System.Services
 
         public ClaimService(ClaimsContext claimsContext)
         {
+            claimsContext.Database.EnsureCreated();
             _claimsContext = claimsContext; // Injected via DI
-            _claimsContext.Database.EnsureCreated();
+
         }
 
-        public List<Claim> GetAllClaims()
+        public List<ClaimViewModel> GetAllClaims()
         {
-            return _claimsContext.Claims
-                .Include(c => c.Person)   
-                .Include(c => c.Course)   
-                .OrderByDescending(c => c.DateClaimed)
-                .ToList();
+            var claims = (from c in _claimsContext.Claims
+                          join p in _claimsContext.Persons on c.PersonId equals p.Id
+                          join s in _claimsContext.ClaimStatuses on c.StatusId equals s.Id
+                          join cl in _claimsContext.Classes on c.ClassId equals cl.Id
+                          join co in _claimsContext.Courses on c.CourseId equals co.Id
+                          select new ClaimViewModel
+                          {
+                              Id = c.Id,
+                              DateClaimed = c.DateClaimed,
+                              ClassName = cl.ClassName,
+                              CourseName = co.Name,
+                              CourseId = c.CourseId,
+                              CourseCode = co.CourseCode,
+                              LectureFirstName = p.FirstName,
+                              LectureLastName = p.LastName,
+                              Rate = c.Rate,
+                              TotalFee = c.TotalFee,
+                              TotalHours = c.TotalHours,
+                              ClassId = c.ClassId,
+                              StatusId = c.StatusId,
+                              PersonId = c.PersonId,
+                              AdditionalNotes = c.AdditionalNotes,
+                              DocumentPath = c.DocumentPath
+                          }
+                ).OrderByDescending(x => x.DateClaimed).ToList();
+            return claims;
         }
 
         public async Task<int> AddClaimAsync(Claim claim) // Updated to be asynchronous
@@ -56,27 +77,77 @@ namespace POE_Claim_System.Services
             return claim.Id;
         }
 
-        public List<Claim> GetAllClaimsForUser(string username)
+        public List<ClaimViewModel> GetAllClaimsForUser(string username)
         {
-            var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username); 
+            var person = _claimsContext.Persons.FirstOrDefault(p => p.EmailAddress == username);
             if (person == null)
             {
-                return new List<Claim>(); 
+                return new List<ClaimViewModel>();
             }
+            // search on the db and return the user claims
+            var claims = (from c in _claimsContext.Claims
+                          join p in _claimsContext.Persons on c.PersonId equals p.Id
+                          join s in _claimsContext.ClaimStatuses on c.StatusId equals s.Id
+                          join cl in _claimsContext.Classes on c.ClassId equals cl.Id
+                          join co in _claimsContext.Courses on c.CourseId equals co.Id
+                          where c.PersonId == person.Id
+                          select new ClaimViewModel
+                          {
+                              Id = c.Id,
+                              DateClaimed = c.DateClaimed,
+                              ClassName = cl.ClassName,
+                              CourseName = co.Name,
+                              CourseId = c.CourseId,
+                              CourseCode = co.CourseCode,
+                              LectureFirstName = p.FirstName,
+                              LectureLastName = p.LastName,
+                              Rate = c.Rate,
+                              TotalFee = c.TotalFee,
+                              TotalHours = c.TotalHours,
+                              ClassId = c.ClassId,
+                              StatusId = c.StatusId,
+                              PersonId = c.PersonId,
+                              AdditionalNotes = c.AdditionalNotes,
+                              DocumentPath = c.DocumentPath
+                          }
+                ).OrderByDescending(x => x.DateClaimed).ToList();
 
-            var claims = _claimsContext.Claims.Where(x => x.PersonId == person.Id).ToList();
             return claims.OrderByDescending(x => x.DateClaimed).ThenBy(x => x.StatusId).ToList();
         }
 
-        
+
 
         // Get all pending claims
-        public List<Claim> GetPendingClaims()
+        public List<ClaimViewModel> GetPendingClaims()
         {
-            var pendingClaims = _claimsContext.Claims
-                                             .Where(c => c.StatusId == 1) // Assuming StatusId = 1 is 'Pending'
-                                             .OrderByDescending(c => c.DateClaimed)
-                                             .ToList();
+
+
+            var pendingClaims = (from c in _claimsContext.Claims
+                                 join p in _claimsContext.Persons on c.PersonId equals p.Id
+                                 join s in _claimsContext.ClaimStatuses on c.StatusId equals s.Id
+                                 join cl in _claimsContext.Classes on c.ClassId equals cl.Id
+                                 join co in _claimsContext.Courses on c.CourseId equals co.Id
+                                 where c.StatusId == 1 // Assuming StatusId = 1 is 'Pending'
+                                 select new ClaimViewModel
+                                 {
+                                     Id = c.Id,
+                                     DateClaimed = c.DateClaimed,
+                                     ClassName = cl.ClassName,
+                                     CourseName = co.Name,
+                                     CourseId = c.CourseId,
+                                     CourseCode = co.CourseCode,
+                                     LectureFirstName = p.FirstName,
+                                     LectureLastName = p.LastName,
+                                     Rate = c.Rate,
+                                     TotalFee = c.TotalFee,
+                                     TotalHours = c.TotalHours,
+                                     ClassId = c.ClassId,
+                                     StatusId = c.StatusId,
+                                     PersonId = c.PersonId,
+                                     AdditionalNotes = c.AdditionalNotes,
+                                     DocumentPath = c.DocumentPath
+                                 }
+                ).OrderByDescending(x => x.DateClaimed).ToList();
             return pendingClaims;
         }
 
@@ -106,4 +177,3 @@ namespace POE_Claim_System.Services
         }
     }
 }
-*/

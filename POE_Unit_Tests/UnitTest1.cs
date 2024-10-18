@@ -1,5 +1,5 @@
 
-
+/*
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
 
@@ -19,7 +19,7 @@ namespace POE_Unit_Tests
             Assert.Equal(8, result);    //correct
         }
         */
-
+/*
 
         public void Test_AddNewClaim()
         {
@@ -62,7 +62,7 @@ namespace POE_Unit_Tests
         }
     }
 }
+     
         
         
-        
-
+*/

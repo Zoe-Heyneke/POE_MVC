@@ -8,11 +8,7 @@ namespace POE_Claim_System.Models
 {
     public class ClaimsContext : DbContext
     {
-        //constructor for ClaimsCOntext to accept Db
-        public ClaimsContext(DbContextOptions<ClaimsContext> options)
-            : base(options)
-        {
-        }
+
         public DbSet<Claim> Claims { get; set; }
 
         public DbSet<Role> Roles { get; set; }
@@ -31,20 +27,18 @@ namespace POE_Claim_System.Models
 
         public DbSet<User> Users { get; set; }
 
-        //when configuring
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            //connection string
-         //   optionsBuilder.UseMySQL("server=localhost;database=Claims_DB;user=root;password=");
-         optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
+            optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
         }
+
 
 
         //model create model in code and put to db
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             //specify relationships
-            
+            base.OnModelCreating(modelBuilder);
             modelBuilder.Entity<Person>().HasKey(p => p.Id);
 
             modelBuilder.Entity<Claim>(entity =>
@@ -62,7 +56,6 @@ namespace POE_Claim_System.Models
             modelBuilder.ApplyConfiguration(new ClassConfiguration());
             modelBuilder.ApplyConfiguration(new CourseConfiguration());
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
-            base.OnModelCreating(modelBuilder);
         }
 
 

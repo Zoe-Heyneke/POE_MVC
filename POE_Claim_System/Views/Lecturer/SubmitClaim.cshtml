@@ -12,7 +12,7 @@
 <div class="container mt-4">
     <h2 class="text-center">Claim Submission</h2>
 
-    <form asp-action="SubmitClaim" asp-controller="Submit" method="post" enctype="multipart/form-data">
+    <form asp-action="SubmitClaim" asp-controller="Lecturer" method="post" enctype="multipart/form-data">
 
         <!-- Course Section -->
         <div class="mt-4">
@@ -55,7 +55,7 @@
             <h4>--Documents--</h4>
             <div class="form-group">
                 <label for="uploadDocument">Choose a Document to Upload:</label>
-                <input asp-for="Document" type="file"  class="form-control-file" /> 
+                <input asp-for="Document" type="file" class="form-control-file" />
             </div>
         </div>
 

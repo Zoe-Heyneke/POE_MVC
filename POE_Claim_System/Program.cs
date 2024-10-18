@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using POE_Claim_System.Models;
+using POE_Claim_System.Models.Data;
 using POE_Claim_System.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -18,7 +19,7 @@ builder.Services.AddDbContext<ClaimsContext>(options =>
 // Register your ClaimService
 builder.Services.AddDbContext<ClaimsContext>();
 builder.Services.AddScoped<ClaimService>();
-
+builder.Services.AddTransient<DataSeeder>();
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(30); // Set session timeout
@@ -50,6 +51,11 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+using (var scope = app.Services.CreateScope())
+{
+    var seeder = scope.ServiceProvider.GetRequiredService<DataSeeder>();
+    seeder.SeedData();
+}
 // Map Razor Pages if necessary
 // app.MapRazorPages(); // Uncomment if using Razor Pages
 

@@ -21,15 +21,13 @@
         //claimstatus
         public int StatusId { get; set; }
         public DateTime DateClaimed { get; set; }
-        public ClaimStatus ClaimStatus { get; set; }
 
         //relationships
-        public virtual Person Person { get; set; } = new Person();
+        public virtual Person Person { get; set; }
         public virtual Course Course { get; set; }
-        public string AdditionalNotes { get; internal set; }
+        public string AdditionalNotes { get; set; }
 
-        public string Username { get; set; }
-        public string Status { get; internal set; }
+
     }
 
 }
