@@ -1,3 +1,8 @@
+1. Unzip files
+2. Open .sln file
+3. File will open in Visual Studio
+4. Run code by pressing green play button
+
 Packages Required
 
     Install MySql.EntityFrameworkCore using Nuget Package Installer
