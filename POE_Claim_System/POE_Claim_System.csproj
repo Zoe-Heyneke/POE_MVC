@@ -23,6 +23,7 @@
 
   <ItemGroup>
     <Folder Include="Views\Submit\" />
+    <Folder Include="wwwroot\NewFolder\" />
   </ItemGroup>
 
 </Project>
