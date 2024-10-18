@@ -1,16 +1,18 @@
 
-/*
+using System.Collections.Generic;
 using POE_Claim_System.Services;
 using POE_Claim_System.Models;
+using Xunit;
+using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore;
 
 namespace POE_Unit_Tests
 {
     public class UnitTest1
     {
-        private ClaimsContext _mockClaimsContext;
-
+        /*example
         [Fact]
-        /*
+        
         public void Test1()
         {
             TestingService service = new TestingService();
@@ -19,50 +21,37 @@ namespace POE_Unit_Tests
             Assert.Equal(8, result);    //correct
         }
         */
-/*
 
-        public void Test_AddNewClaim()
+        //create inmemory for temoporary test data
+        public class DocumentServiceTests
         {
-            var claimService = new ClaimService();
-            var claim = new Claim
+            private readonly ClaimsContext _context;
+            private readonly DocumentService _documentService;
+
+            public DocumentServiceTests()
             {
-                TotalHours = 5,
-                Rate = 50,
-                PersonId = 1
-            };
+                // Set up in-memory database for testing
+                var options = new DbContextOptionsBuilder<ClaimsContext>()
+                    .UseInMemoryDatabase(databaseName: "TestDatabase")
+                    .Options;
 
-            var claimId = claimService.AddClaimAsync(claim);
+                _context = new ClaimsContext(options);
+                _documentService = new DocumentService(_context);
+            }
 
-            Assert.True(claimId > 0);
-        }
+            [Fact]
+            public void AddClaimDocument_ShouldAddDocument()
+            {
+                // Arrange
+                var document = new Document { Id = 1, DocumentName = "test.pdf" };
 
-        [Fact]
-        public void Test_ApproveClaim()
-        {
-            var claimService = new ClaimService();
-            var claimId = 1;
+                // Act
+                var result = _documentService.AddClaimDocument(document);
 
-            claimService.UpdateClaimStatus(claimId, "approved");
-
-            var updatedClaim = claimService.ApproveClaim(claimId);
-            Assert.Equal("approved", updatedClaim.ClaimStatus.Status);
-        }
-
-        [Fact]
-        public void Test_GetClaimById()
-        {
-            var claimService = new ClaimService(_mockClaimsContext);
-
-            // Assume claimId 1 exists in the mocked database
-            var claimId = 1;
-            var claim = claimService.GetAllClaimsForUser(personId);
-
-            Assert.NotNull(claim);  // Check that the claim exists
-            Assert.Equal(claimId, claim.Id);  // Check that the correct claim is returned
+                // Assert
+                Assert.Equal(1, result); // Ensure the returned ID is correct
+                Assert.Single(_context.Documents); // Ensure one document is added
+            }
         }
     }
 }
-     
-        
-        
-*/

@@ -9,13 +9,14 @@ namespace POE_Claim_System.Services
     public class ClaimService
     {
         private readonly ClaimsContext _claimsContext;
+        private List<Claim> claims;
 
         public ClaimService(ClaimsContext claimsContext)
         {
-            claimsContext.Database.EnsureCreated();
             _claimsContext = claimsContext; // Injected via DI
-
+            claimsContext.Database.EnsureCreated();
         }
+
 
         public List<ClaimViewModel> GetAllClaims()
         {
@@ -129,7 +130,7 @@ namespace POE_Claim_System.Services
                                  join s in _claimsContext.ClaimStatuses on c.StatusId equals s.Id
                                  join cl in _claimsContext.Classes on c.ClassId equals cl.Id
                                  join co in _claimsContext.Courses on c.CourseId equals co.Id
-                                 where c.StatusId == 1 // Assuming StatusId = 1 is 'Pending'
+                                 where c.StatusId == 1 //StatusId = 1 is 'Pending'
                                  select new ClaimViewModel
                                  {
                                      Id = c.Id,
@@ -159,12 +160,12 @@ namespace POE_Claim_System.Services
             var claim = _claimsContext.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
             {
-                claim.StatusId = 2; // Assuming StatusId = 2 is 'Approved'
+                claim.StatusId = 2; //StatusId = 2 is 'Approved'
                 _claimsContext.SaveChanges();
             }
         }
 
-        // Update claim status to 'Rejected' or any other status
+        // Update claim status 
         public void UpdateClaimStatus(int claimId, string status)
         {
             var claim = _claimsContext.Claims.FirstOrDefault(c => c.Id == claimId);

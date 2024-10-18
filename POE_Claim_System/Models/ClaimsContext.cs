@@ -8,6 +8,9 @@ namespace POE_Claim_System.Models
 {
     public class ClaimsContext : DbContext
     {
+        public ClaimsContext(DbContextOptions options) : base(options)
+        {
+        }
 
         public DbSet<Claim> Claims { get; set; }
 
