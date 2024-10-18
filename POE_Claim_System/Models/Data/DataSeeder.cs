@@ -83,7 +83,7 @@ public class DataSeeder
                 new Rate
                 {
                     Id = 1,
-                    HourlyRate = 1000,
+                    HourlyRate = 800,
                 }
 
             };
