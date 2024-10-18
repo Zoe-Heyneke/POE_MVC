@@ -35,7 +35,7 @@ namespace POE_Claim_System.Controllers
         public IActionResult Index()
         {
             var userName = HttpContext.Session.GetString("Username");
-            var claims = _claimService.GetAllClaimsForUser(userName);
+            var claims = _claimService.GetAllClaimsForLecturer(userName);
             return View(claims);
         }
 
@@ -105,12 +105,13 @@ namespace POE_Claim_System.Controllers
 
         //insert track directory to view status
 
+        /*
         public IActionResult Track(int id)
         {
             var username = User.Identity.Name;
             var claims = _claimService.GetAllClaimsForLecturer(username);
             return View(claims);
         }
-
+        */
     }
 }

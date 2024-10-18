@@ -11,7 +11,6 @@
     <div>
         <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Home</a>
         <a href="@Url.Action("SubmitClaim", "Lecturer")" class="btn btn-primary">Submit Claim</a>
-        <a href="@Url.Action("Track", "Lecturer")" class="btn btn-primary">Tracking</a>
     </div>
 
     <!-- Claims Summary Table -->
@@ -26,6 +25,7 @@
                 <th>Total Fee</th>
                 <th>Notes</th>
                 <th>Document</th>
+                <th>Status</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -48,6 +48,20 @@
                         else
                         {
                             <span>No Document</span>
+                        }
+                    </td>
+                    <td>
+                        @if (claim.StatusId == 1)
+                        {
+                            <span class="badge bg-warning">Pending</span>
+                        }
+                        else if (claim.StatusId == 2)
+                        {
+                            <span class="badge bg-success">Approved</span>
+                        }
+                        else if (claim.StatusId == 3)
+                        {
+                            <span class="badge bg-danger">Rejected</span>
                         }
                     </td>
                     <td>

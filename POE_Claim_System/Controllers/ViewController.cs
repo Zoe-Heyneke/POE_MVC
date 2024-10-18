@@ -15,7 +15,7 @@ public class ViewController : Controller
         if (User.Identity.IsAuthenticated)
         {
             // Fetch claims for the logged-in user
-            var claims = _claimService.GetAllClaimsForUser(User.Identity.Name);
+            var claims = _claimService.GetAllClaimsForLecturer(User.Identity.Name);
             return View("ViewClaim", claims);
         }
         else
