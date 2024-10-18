@@ -30,7 +30,7 @@ namespace POE_Unit_Tests
 
             public DocumentServiceTests()
             {
-                // Set up in-memory database for testing
+                //inmemory db for testing with temp values
                 var options = new DbContextOptionsBuilder<ClaimsContext>()
                     .UseInMemoryDatabase(databaseName: "TestDb")
                     .Options;
@@ -48,9 +48,9 @@ namespace POE_Unit_Tests
                 // Act
                 var result = _documentService.AddClaimDocument(document);
 
-                // Assert
-                Assert.Equal(1, result); // Ensure the returned ID is correct
-                Assert.Single(_context.Documents); // Ensure one document is added
+                //Assert (actual value that is true)
+                Assert.Equal(1, result); //give correct number of id
+                Assert.Single(_context.Documents); //add one document
             }
         }
     }
