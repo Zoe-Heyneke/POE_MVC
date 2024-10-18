@@ -1,11 +1,11 @@
 ﻿@model IEnumerable<POE_Claim_System.Models.ClaimViewModel>
 
 @{
-    ViewData["Title"] = "Submitted Claims Summary";
+    ViewData["Title"] = "Track Status";
 }
 
 <div class="container mt-4">
-    <h2 class="text-center">Submitted Claims Summary</h2>
+    <h2 class="text-center">Track Status of Claims</h2>
 
     <!-- Home Link -->
     <div>
@@ -26,7 +26,7 @@
                 <th>Total Fee</th>
                 <th>Notes</th>
                 <th>Document</th>
-                <th>Actions</th>
+                <th>Status</th>
             </tr>
         </thead>
         <tbody>
@@ -50,11 +50,7 @@
                             <span>No Document</span>
                         }
                     </td>
-                    <td>
-                        <a href="@Url.Action("Edit", "Submit", new { id = claim.Id })" class="btn btn-sm btn-warning">Edit</a>
-                        <a href="@Url.Action("Details", "Submit", new { id = claim.Id })" class="btn btn-sm btn-info">Details</a>
-                        <a href="@Url.Action("Delete", "Submit", new { id = claim.Id })" class="btn btn-sm btn-danger">Delete</a>
-                    </td>
+                    <td>@claim.Status</td>
                 </tr>
             }
         </tbody>
