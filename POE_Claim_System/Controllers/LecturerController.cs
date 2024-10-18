@@ -103,6 +103,18 @@ namespace POE_Claim_System.Controllers
             return View(model);
         }
 
-        //insert track directory to view 
+        //insert track directory to view status
+
+        public IActionResult ApproveClaim(int id)
+        {
+            _claimService.UpdateClaimStatus(id, "Approved");
+            return RedirectToAction("Track");
+        }
+
+        public IActionResult RejectClaim(int id)
+        {
+            _claimService.UpdateClaimStatus(id, "Rejected");
+            return RedirectToAction("Track");
+        }
     }
 }

@@ -27,7 +27,7 @@ namespace POE_Claim_System.Controllers
         [HttpPost]
         public IActionResult ApproveClaim(int claimId)
         {
-            _claimService.ApproveClaim(claimId);
+            _claimService.UpdateClaimStatus(claimId, "Approved");
             return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
 

@@ -172,6 +172,14 @@ namespace POE_Claim_System.Services
                 {
                     claim.StatusId = 3; // Assuming StatusId = 3 is 'Rejected'
                 }
+                else if (status == "Approved")
+                {
+                    claim.StatusId= 2;
+                }
+                else
+                {
+                    claim.StatusId= 1;
+                }
                 _claimsContext.SaveChanges();
             }
         }
