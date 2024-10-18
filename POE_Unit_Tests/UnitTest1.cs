@@ -32,7 +32,7 @@ namespace POE_Unit_Tests
             {
                 // Set up in-memory database for testing
                 var options = new DbContextOptionsBuilder<ClaimsContext>()
-                    .UseInMemoryDatabase(databaseName: "TestDatabase")
+                    .UseInMemoryDatabase(databaseName: "TestDb")
                     .Options;
 
                 _context = new ClaimsContext(options);
@@ -43,7 +43,7 @@ namespace POE_Unit_Tests
             public void AddClaimDocument_ShouldAddDocument()
             {
                 // Arrange
-                var document = new Document { Id = 1, DocumentName = "test.pdf" };
+                var document = new Document { Id = 1, DocumentName = "test1.pdf" };
 
                 // Act
                 var result = _documentService.AddClaimDocument(document);
