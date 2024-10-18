@@ -14,9 +14,9 @@ namespace POE_Claim_System.Controllers
             {
                 return RedirectToAction("Index", "Lecturer");
             }
-            else if (role == "CM") // Assuming CM stands for Coordinator and Manager
+            else if (role == "CoordinatorManager") // Assuming CM stands for Coordinator and Manager
             {
-                return RedirectToAction("Index", "CM");
+                return RedirectToAction("Index", "CoordinatorManager");
             }
 
             // Optional: handle case where role is not recognized
