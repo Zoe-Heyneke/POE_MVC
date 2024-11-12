@@ -14,19 +14,19 @@ public class DataSeeder
     {
         if (!_context.Classes.Any())
         {
-            IEnumerable<Class> classes = new List<Class>()
+            IEnumerable<Classes> classes = new List<Classes>()
             {
-                new Class
+                new Classes
                 {
                     Id = 1,
                     ClassName = "Group 1"
                 },
-                new Class
+                new Classes
                 {
                     Id = 2,
                     ClassName = "Group 2"
                 },
-                new Class
+                new Classes
                 {
                     Id = 3,
                     ClassName = "Group 3"
@@ -39,30 +39,30 @@ public class DataSeeder
 
         if (!_context.Courses.Any())
         {
-            IEnumerable<Course> courses = new List<Course>()
+            IEnumerable<Courses> courses = new List<Courses>()
             {
-                new Course
+                new Courses
                 {
                     Id = 1,
                     CourseCode = "PROG6212",
                     Name = "Programming 2B",
                     Timestamp = DateTime.UtcNow,
                 },
-                new Course
+                new Courses
                 {
                     Id = 2,
                     CourseCode = "AD100",
                     Name = "Advanced Databases",
                     Timestamp = DateTime.UtcNow,
                 },
-                new Course
+                new Courses
                   {
                       Id = 3,
                       CourseCode = "WEDE6021",
                       Name = "Web Development (Intermediate)",
                       Timestamp = DateTime.UtcNow,
                   },
-                  new Course
+                  new Courses
                   {
                       Id = 4,
                       CourseCode = "SOEN6222",
@@ -78,9 +78,9 @@ public class DataSeeder
 
         if (!_context.Rates.Any())
         {
-            IEnumerable<Rate> rates = new List<Rate>()
+            IEnumerable<Rates> rates = new List<Rates>()
             {
-                new Rate
+                new Rates
                 {
                     Id = 1,
                     HourlyRate = 800,

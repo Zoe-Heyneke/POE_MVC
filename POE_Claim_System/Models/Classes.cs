@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace POE_Claim_System.Models
 {
-    public class Class
+    public class Classes
     {
         [Key]
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]

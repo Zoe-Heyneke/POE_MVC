@@ -3,6 +3,8 @@ using POE_Claim_System.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using POE_Claim_System.Models.Data;
+using Microsoft.Extensions.Options;
+using System.Configuration;
 
 namespace POE_Claim_System.Models
 {
@@ -10,6 +12,7 @@ namespace POE_Claim_System.Models
     {
         public ClaimsContext(DbContextOptions options) : base(options)
         {
+            Database.EnsureCreated();
         }
 
         public DbSet<Claim> Claims { get; set; }
@@ -18,21 +21,23 @@ namespace POE_Claim_System.Models
 
         public DbSet<Person> Persons { get; set; }
 
-        public DbSet<Course> Courses { get; set; }
+        public DbSet<Courses> Courses { get; set; }
 
-        public DbSet<Class> Classes { get; set; }
+        public DbSet<Classes> Classes { get; set; }
 
         public DbSet<ClaimStatus> ClaimStatuses { get; set; }
 
         public DbSet<Document> Documents { get; set; }
 
-        public DbSet<Rate> Rates { get; set; }
+        public DbSet<Rates> Rates { get; set; }
 
         public DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
+            //optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
+            // connect to sqlite database
+            optionsBuilder.UseSqlite("Data Source=Claims.db");
         }
 
 
@@ -54,10 +59,10 @@ namespace POE_Claim_System.Models
                 entity.HasOne(c => c.Course).WithMany().HasForeignKey(c => c.CourseId);
             });
 
-            modelBuilder.ApplyConfiguration(new RateConfiguration());
-            modelBuilder.ApplyConfiguration(new StatusConfiguration());
-            modelBuilder.ApplyConfiguration(new ClassConfiguration());
-            modelBuilder.ApplyConfiguration(new CourseConfiguration());
+            modelBuilder.ApplyConfiguration(new RatesConfiguration());
+            modelBuilder.ApplyConfiguration(new ClaimStatusConfiguration());
+            modelBuilder.ApplyConfiguration(new ClassesConfiguration());
+            modelBuilder.ApplyConfiguration(new CoursesConfiguration());
             modelBuilder.Entity<Role>().HasKey(r => r.Id);
         }
 

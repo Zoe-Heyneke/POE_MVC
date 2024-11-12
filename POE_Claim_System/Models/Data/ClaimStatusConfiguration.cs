@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace POE_Claim_System.Models.Data
 {
-    public class StatusConfiguration : IEntityTypeConfiguration<ClaimStatus>
+    public class ClaimStatusConfiguration : IEntityTypeConfiguration<ClaimStatus>
     {
         public void Configure(EntityTypeBuilder<ClaimStatus> builder)
         {

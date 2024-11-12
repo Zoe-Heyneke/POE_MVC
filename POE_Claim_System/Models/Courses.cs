@@ -1,6 +1,6 @@
 ﻿namespace POE_Claim_System.Models
 {
-    public class Course
+    public class Courses
     {
         public int Id { get; set; }
         public string CourseCode { get; set; }

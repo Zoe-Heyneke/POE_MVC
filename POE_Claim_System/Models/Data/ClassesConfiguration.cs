@@ -3,24 +3,24 @@ using Microsoft.EntityFrameworkCore;
 
 namespace POE_Claim_System.Models.Data
 {
-    public class ClassConfiguration : IEntityTypeConfiguration<Class>
+    public class ClassesConfiguration : IEntityTypeConfiguration<Classes>
     {
-        public void Configure(EntityTypeBuilder<Class> builder)
+        public void Configure(EntityTypeBuilder<Classes> builder)
         {
             builder.HasKey(b => b.Id);
             builder.HasData
             (
-                new Class
+                new Classes
                 {
                     Id = 1,
                     ClassName = "Group 1"
                 },
-                  new Class
+                  new Classes
                   {
                       Id = 2,
                       ClassName = "Group 2"
                   },
-                  new Class
+                  new Classes
                   {
                       Id = 3,
                       ClassName = "Group 3"

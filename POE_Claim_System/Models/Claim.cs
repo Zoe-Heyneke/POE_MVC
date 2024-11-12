@@ -24,7 +24,7 @@
 
         //relationships
         public virtual Person Person { get; set; }
-        public virtual Course Course { get; set; }
+        public virtual Courses Course { get; set; }
         public string AdditionalNotes { get; set; }
 
 

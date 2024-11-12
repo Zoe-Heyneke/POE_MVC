@@ -3,14 +3,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace POE_Claim_System.Models.Data
 {
-    public class RateConfiguration : IEntityTypeConfiguration<Rate>
+    public class RatesConfiguration : IEntityTypeConfiguration<Rates>
     {
-        public void Configure(EntityTypeBuilder<Rate> builder)
+        public void Configure(EntityTypeBuilder<Rates> builder)
         {
             builder.HasKey(b => b.Id);
             builder.HasData
             (
-                new Rate
+                new Rates
                 {
                     Id = 1,
                     HourlyRate = 800,

@@ -1,6 +1,6 @@
 ﻿namespace POE_Claim_System.Models
 {
-    public class Rate
+    public class Rates
     {
         //have global rate
 
