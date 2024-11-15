@@ -63,6 +63,11 @@ namespace POE_Claim_System.Controllers
             return View("Index");
         }
 
+        public IActionResult LogOut()
+        {
+            return RedirectToAction("LogIn");
+        }
+
 
         [HttpPost]
         public IActionResult LogIn(LogIn model)

@@ -34,7 +34,17 @@ namespace POE_Claim_System.Controllers
 
         public IActionResult Index()
         {
+            //fetch username from session
             var userName = HttpContext.Session.GetString("Username");
+
+            //user validation when login
+            if(string.IsNullOrEmpty(userName))
+            {
+                //if username null or empty redirect login action method in home controller
+                return RedirectToAction("LogIn", "Home");
+            }
+
+            //fetch claims for lecturer using the valid username
             var claims = _claimService.GetAllClaimsForLecturer(userName);
             return View(claims);
         }
