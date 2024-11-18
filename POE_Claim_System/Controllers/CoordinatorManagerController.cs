@@ -36,6 +36,7 @@ namespace POE_Claim_System.Controllers
         public IActionResult RejectClaim(int claimId)
         {
             _claimService.UpdateClaimStatus(claimId, "Rejected");
+            //_claimService.RejectClaim(claimId, rejectReason);
             return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
     }

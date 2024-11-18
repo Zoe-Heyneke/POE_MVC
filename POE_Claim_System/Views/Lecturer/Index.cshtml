@@ -76,12 +76,16 @@
                         else if (claim.StatusId == 3)
                         {
                             <span class="badge bg-danger">Rejected</span>
+                            //<p>@claim.RejectReason</p>
                         }
                     </td>
                     <td>
-                        <a href="@Url.Action("Edit", "Submit", new { id = claim.Id })" class="btn btn-sm btn-warning px-2 py-1" style="font-size: 0.85rem;">Edit</a>
-                        <a href="@Url.Action("Details", "Submit", new { id = claim.Id })" class="btn btn-sm btn-info px-2 py-1" style="font-size: 0.85rem;">Details</a>
-                        <a href="@Url.Action("Delete", "Submit", new { id = claim.Id })" class="btn btn-sm btn-danger px-2 py-1" style="font-size: 0.85rem;">Delete</a>
+                        @if (claim.StatusId == 1) //show actions for pending status
+                        {
+                            <a href="@Url.Action("Edit", "Submit", new { id = claim.Id })" class="btn btn-sm btn-warning px-2 py-1">Edit</a>
+                            <a href="@Url.Action("Details", "Submit", new { id = claim.Id })" class="btn btn-sm btn-info px-2 py-1">Details</a>
+                            <a href="@Url.Action("Delete", "Submit", new { id = claim.Id })" class="btn btn-sm btn-danger px-2 py-1">Delete</a>
+                        }
                     </td>
 
                 </tr>

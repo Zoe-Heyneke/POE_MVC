@@ -19,4 +19,5 @@ public class ClaimViewModel
     public string AdditionalNotes { get; set; }
     public string LectureFirstName { get; set; }
     public string LectureLastName { get; set; }
+    //public string RejectReason { get; set; }
 }

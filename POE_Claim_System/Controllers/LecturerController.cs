@@ -59,6 +59,7 @@ namespace POE_Claim_System.Controllers
             return View(claims);
         }
 
+
         public IActionResult DownloadReport()
         {
             string fileName = DateTime.Now.ToFileTime() + ".pdf";

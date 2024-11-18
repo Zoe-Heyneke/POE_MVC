@@ -27,6 +27,7 @@
         public virtual Courses Course { get; set; }
         public string AdditionalNotes { get; set; }
 
+        //public string RejectReason { get; set; }
 
     }
 
