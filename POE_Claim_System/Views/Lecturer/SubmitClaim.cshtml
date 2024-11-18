@@ -45,7 +45,8 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="totalHours">Total Hours Worked:</label>
-                        <input asp-for="TotalHours" id="totalHours" name="totalHours" class="form-control" placeholder="Enter total hours worked" />
+                        <input asp-for="TotalHours" id="totalHours" name="totalHours" class="form-control" placeholder="Enter total hours worked" min="1" max="60" />
+                        <span asp-validation-for="TotalHours" class="text-danger"></span>
                     </div>
                 </div>
             </div>

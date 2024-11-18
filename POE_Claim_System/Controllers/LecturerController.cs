@@ -214,6 +214,12 @@ namespace POE_Claim_System.Controllers
         {
             //add claim
 
+            //hours validation
+            if (model.TotalHours <= 0 || model.TotalHours > 60)
+            {
+                ModelState.AddModelError("TotalHours", "Total hours must be between 1 and 60.");
+            }
+
             var userName = HttpContext.Session.GetString("Username");
             var user = _claimsContext.Persons.FirstOrDefault(x => x.EmailAddress == userName);
             if (ModelState.IsValid)
