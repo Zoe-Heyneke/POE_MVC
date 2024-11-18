@@ -81,7 +81,7 @@ namespace POE_Claim_System.Controllers
             //add information in header
             document.Add(new Paragraph("Claims Report", header));
             document.Add(new Paragraph($"Date {DateTime.Now.ToString("dd MMM yyyy HH:mm")}", header));
-            document.Add(new Paragraph($"Please see below a table view of all your claims:", header));
+            document.Add(new Paragraph($"Please see below a table view of all your claims submitted:", header));
 
             //set columns and width
             PdfPTable table = new PdfPTable(8);
