@@ -22,7 +22,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="courseCode">Course Code:</label>
-                        <select class="form-select form-select-solid" data-control="select2" asp-for="CourseId" asp-items="Model.Courses" data-hide-search="false">
+                        <select class="form-select form-select-solid" data-control="select2" asp-for="CourseId" asp-items="Model.Courses" data-hide-search="false" required>
                             <option value="0">Please select</option>
                         </select>
                     </div>
@@ -30,7 +30,7 @@
                 <div class="col-md-6">
                     <div class="form-group">
                         <label for="groupNumber">Group Number:</label>
-                        <select class="form-select form-select-solid" data-control="select2" asp-for="ClassId" asp-items="Model.Classes" data-hide-search="false">
+                        <select class="form-select form-select-solid" data-control="select2" asp-for="ClassId" asp-items="Model.Classes" data-hide-search="false" required>
                             <option value="0">Please select</option>
                         </select>
                     </div>

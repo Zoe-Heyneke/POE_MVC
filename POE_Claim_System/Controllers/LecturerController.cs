@@ -214,6 +214,13 @@ namespace POE_Claim_System.Controllers
         {
             //add claim
 
+            //course validation to be required
+            if (model.CourseId == 0)
+            {
+                ModelState.AddModelError("CourseId", "Please select a course.");
+            }
+
+
             //hours validation
             if (model.TotalHours <= 0 || model.TotalHours > 60)
             {
