@@ -49,12 +49,8 @@
                             </form>
                             <form asp-action="RejectClaim" asp-controller="CoordinatorManager" method="post" style="display: inline-block;">
                                 <input type="hidden" name="ClaimId" value="@claim.Id" />
-                                <div class="form-group">
-                                    <textarea name="rejectReason" placeholder="Reason for rejection" class="form-control" rows="2" required></textarea>
-                                </div>
-                                <button type="submit" class="btn btn-danger mt-2">Reject</button>
+                                <button type="submit" class="btn btn-danger">Reject</button>
                             </form>
-
                         </td>
                     </tr>
                 }

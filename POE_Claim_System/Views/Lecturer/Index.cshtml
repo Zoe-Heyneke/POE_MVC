@@ -76,7 +76,7 @@
                         else if (claim.StatusId == 3)
                         {
                             <span class="badge bg-danger">Rejected</span>
-                            <p>@claim.RejectReason</p>
+                            
                         }
                     </td>
                     <td>
@@ -100,6 +100,18 @@
             No claims have been submitted yet.
         </div>
     }
+
+    <!-- Claims Summary-->
+    <div class="text-center mt-4">
+        @{
+            var totalApproved = Model.Count(c=>c.StatusId==2);
+            var totalRejected = Model.Count(c=>c.StatusId==3);
+            var totalPending  = Model.Count(c=>c.StatusId==1);
+        }
+        <h4>Total Approved Claims: @totalApproved</h4>
+        <h4>Total Rejected Claims: @totalRejected</h4>
+        <h4>Total Pending Claims: @totalPending</h4>
+    </div>
 
     <!-- Footer -->
     <div class="text-center mt-4">
