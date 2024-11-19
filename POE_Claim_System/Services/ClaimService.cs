@@ -166,7 +166,7 @@ namespace POE_Claim_System.Services
         }
 
         // Update claim status 
-        public void UpdateClaimStatus(int claimId, string status)
+        public void UpdateClaimStatus(int claimId, string status, string rejectReason)
         {
             var claim = _claimsContext.Claims.FirstOrDefault(c => c.Id == claimId);
             if (claim != null)
@@ -174,7 +174,7 @@ namespace POE_Claim_System.Services
                 if (status == "Rejected")
                 {
                     claim.StatusId = 3; //Rejected
-                    //claim.RejectReason = rejectReason;  //store reason
+                    claim.RejectReason = rejectReason;  //store reason
                 }
                 else if (status == "Approved")
                 {
@@ -188,7 +188,6 @@ namespace POE_Claim_System.Services
             }
         }
         //reject method
-        /*
         public void RejectClaim(int claimId, string rejectReason)
         {
             var claim = _claimsContext.Claims.FirstOrDefault(c => c.Id == claimId);
@@ -199,7 +198,7 @@ namespace POE_Claim_System.Services
                 _claimsContext.SaveChanges(); 
             }
         }
-        */
+        
 
     }
 }

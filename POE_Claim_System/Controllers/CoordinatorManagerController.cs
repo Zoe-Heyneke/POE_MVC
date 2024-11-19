@@ -33,10 +33,19 @@ namespace POE_Claim_System.Controllers
 
         // Reject a claim
         [HttpPost]
-        public IActionResult RejectClaim(int claimId)
+        public IActionResult RejectClaim(int claimId, string rejectReason)
         {
-            _claimService.UpdateClaimStatus(claimId, "Rejected");
+            /*
+            if (string.IsNullOrWhiteSpace(rejectReason))
+            {
+                //error message if the reason is not provided.
+                TempData["Error"] = "Rejection reason is required.";
+                return RedirectToAction("Index");
+            }
+            */
             //_claimService.RejectClaim(claimId, rejectReason);
+
+            _claimService.UpdateClaimStatus(claimId, "Rejected");
             return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
     }

@@ -37,7 +37,7 @@ namespace POE_Claim_System.Models
         {
             //optionsBuilder.UseInMemoryDatabase(databaseName: "Claims");
             // connect to sqlite database
-            optionsBuilder.UseSqlite("Data Source=Claims.db");
+            optionsBuilder.UseSqlite("Data Source=NewClaims.db");
         }
 
 
