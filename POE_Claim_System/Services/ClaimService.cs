@@ -120,7 +120,7 @@ namespace POE_Claim_System.Services
 
 
 
-        // Get all pending claims
+        //Get all pending claims
         public List<ClaimViewModel> GetPendingClaims()
         {
 
@@ -154,7 +154,42 @@ namespace POE_Claim_System.Services
             return pendingClaims;
         }
 
-        // Approve a claim by setting StatusId to 'Approved'
+        //get approved claims
+        public List<ClaimViewModel> GetApprovedClaims()
+        {
+            var approvedClaims = (from c in _claimsContext.Claims
+                                  join p in _claimsContext.Persons on c.PersonId equals p.Id
+                                  join s in _claimsContext.ClaimStatuses on c.StatusId equals s.Id
+                                  join cl in _claimsContext.Classes on c.ClassId equals cl.Id
+                                  join co in _claimsContext.Courses on c.CourseId equals co.Id
+                                  where c.StatusId == 2 //StatusId = 2 is 'Approved'
+                                  select new ClaimViewModel
+                                  {
+                                      Id = c.Id,
+                                      DateClaimed = c.DateClaimed,
+                                      ClassName = cl.ClassName,
+                                      CourseName = co.Name,
+                                      CourseId = c.CourseId,
+                                      CourseCode = co.CourseCode,
+                                      LectureFirstName = p.FirstName,
+                                      LectureLastName = p.LastName,
+                                      Rate = c.Rate,
+                                      TotalFee = c.TotalFee,
+                                      TotalHours = c.TotalHours,
+                                      ClassId = c.ClassId,
+                                      StatusId = c.StatusId,
+                                      PersonId = c.PersonId,
+                                      AdditionalNotes = c.AdditionalNotes,
+                                      DocumentPath = c.DocumentPath,
+                                      Status = s.Status
+                                  }
+                        ).OrderByDescending(x => x.DateClaimed).ToList();
+
+            return approvedClaims;
+        }
+
+
+        //approve a claim by setting StatusId to 'Approved'
         public void ApproveClaim(int claimId)
         {
             var claim = _claimsContext.Claims.FirstOrDefault(c => c.Id == claimId);

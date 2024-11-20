@@ -5,7 +5,7 @@
 }
 
 <!-- Header -->
-<div class="bg-info text-white text-center py-4 rounded shadow mb-4">
+<div style="background-color:lightsteelblue; color: black;" class="text-center py-4 rounded shadow mb-4">
     <h1><i class="bi bi-check-square"></i> Pending Claims</h1>
     <p class="lead">A detailed list of claims that need your approval or rejection:</p>
 </div>
@@ -14,7 +14,7 @@
 <!-- Home Link -->
 <div>
     <a href="@Url.Action("Index", "Home")" class="btn btn-primary">Home</a>
-   
+    <a href="@Url.Action("HrView", "CoordinatorManager")" class="btn btn-secondary">HR</a>
 </div>
 
 <div class="container">
@@ -45,11 +45,11 @@
                         <td>
                             <form asp-action="ApproveClaim" asp-controller="CoordinatorManager" method="post" style="display: inline-block;">
                                 <input type="hidden" name="ClaimId" value="@claim.Id" />
-                                <button type="submit" class="btn btn-success">Approve</button>
+                                <button type="submit" class="btn" style="background-color: seagreen; color: white;">Approve</button>
                             </form>
                             <form asp-action="RejectClaim" asp-controller="CoordinatorManager" method="post" style="display: inline-block;">
                                 <input type="hidden" name="ClaimId" value="@claim.Id" />
-                                <button type="submit" class="btn btn-danger">Reject</button>
+                                <button type="submit" class="btn" style="background-color: chocolate; color: white;">Reject</button>
                             </form>
                         </td>
                     </tr>

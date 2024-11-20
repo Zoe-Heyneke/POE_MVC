@@ -1,0 +1,70 @@
+﻿@model List<POE_Claim_System.Models.ClaimViewModel>
+
+@{
+    ViewData["Title"] = "Approved Claims";
+}
+
+<div class="container mt-4">
+
+    <div style="background-color: powderblue; color: black;" class="text-center py-4 rounded shadow mb-4">
+        <h1 class="text-center">Approved Claims</h1>
+        <p class="lead">View of approved claims, where you have the final say to generate the invoice</p>
+    </div>
+
+    <div class="mb-3">
+        <a href="@Url.Action("Index", "CoordinatorManager")" class="btn btn-primary">Go Back</a>
+        <a href="@Url.Action("GenerateReportInvoice", "CoordinatorManager")" class="btn" style="background-color: indianred; color: black;">Generate Report</a>
+    </div>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Claim ID</th>
+                <th>Date Claimed</th>
+                <th>Class Name</th>
+                <th>Course Name</th>
+                <th>Lecture First Name</th>
+                <th>Lecture Last Name</th>
+                <th>Total Hours</th>
+                <th>Total Fee</th>
+                <th>Additional Notes</th>
+                <th>Document</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var claim in Model)
+                {
+                    <tr>
+                        <td>@claim.Id</td>
+                        <td>@claim.DateClaimed.ToString("yyyy-MM-dd")</td>
+                        <td>@claim.ClassName</td>
+                        <td>@claim.CourseName</td>
+                        <td>@claim.LectureFirstName</td>
+                        <td>@claim.LectureLastName</td>
+                        <td>@claim.TotalHours</td>
+                        <td>@claim.TotalFee.ToString("C")</td> 
+                        <td>@claim.AdditionalNotes</td>
+                        <td>
+                            @if (!string.IsNullOrEmpty(claim.DocumentPath))
+                            {
+                                <a href="@claim.DocumentPath" target="_blank">View Document</a>
+                            }
+                            else
+                            {
+                                <span>No Document</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            }
+            else
+            {
+                <tr>
+                    <td colspan="10" class="text-center">No approved claims found.</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

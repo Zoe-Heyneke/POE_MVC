@@ -10,6 +10,8 @@ using iTextSharp.text;
 using iTextSharp.text.pdf;
 using System.Reflection.PortableExecutable;
 using static iTextSharp.text.pdf.AcroFields;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Hosting;
 
 
 namespace POE_Claim_System.Controllers
@@ -59,10 +61,10 @@ namespace POE_Claim_System.Controllers
             return View(claims);
         }
 
-
+        //download report of submitted claims
         public IActionResult DownloadReport()
         {
-            string fileName = DateTime.Now.ToFileTime() + ".pdf";
+            string fileName = "Lecturer_Report_" + DateTime.Now.ToFileTime() + ".pdf";
             //get data from session
             var claimsData = HttpContext.Session.GetString("ClaimsData");
             var claims = JsonConvert.DeserializeObject<List<ClaimViewModel>>(claimsData!);
@@ -80,7 +82,7 @@ namespace POE_Claim_System.Controllers
             Font data = FontFactory.GetFont("Serif", 8, Font.NORMAL, BaseColor.BLACK);
             document.Open();
             //add information in header
-            document.Add(new Paragraph("Claims Report", header));
+            document.Add(new Paragraph("Report: Claims Submitted", header));
             document.Add(new Paragraph($"Date {DateTime.Now.ToString("dd MMM yyyy HH:mm")}", header));
             document.Add(new Paragraph($"Please see below a table view of all your claims submitted:", header));
 
