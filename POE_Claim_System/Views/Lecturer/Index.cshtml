@@ -38,7 +38,7 @@
                 <th>Notes</th>
                 <th>Document</th>
                 <th>Status</th>
-                <th>Rejection Reason</th>
+                
                 <th>Actions</th>
             </tr>
         </thead>
@@ -77,15 +77,18 @@
                         else if (claim.StatusId == 3)
                         {
                             <span class="badge bg-danger">Rejected</span>
+                            <div>
+                                <strong>Rejection Reason:</strong> @claim.RejectionReason
+                            </div>
                         }
                     </td>
-                    <td>@claim.RejectionReason</td>
+                    
                     <td>
                         @if (claim.StatusId == 1) //show actions for pending status
                         {
-                            <a href="@Url.Action("Edit", "Submit", new { id = claim.Id })" class="btn btn-sm btn-warning px-2 py-1">Edit</a>
-                            <a href="@Url.Action("Details", "Submit", new { id = claim.Id })" class="btn btn-sm btn-info px-2 py-1">Details</a>
-                            <a href="@Url.Action("Delete", "Submit", new { id = claim.Id })" class="btn btn-sm btn-danger px-2 py-1">Delete</a>
+                            <a href="@Url.Action("Edit", "Lecturer", new { id = claim.Id })" class="btn btn-sm btn-warning px-2 py-1">Edit</a>
+                           
+                            <a href="@Url.Action("Delete", "Lecturer", new { id = claim.Id })" class="btn btn-sm btn-danger px-2 py-1">Delete</a>
                         }
                     </td>
 

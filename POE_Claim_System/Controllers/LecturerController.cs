@@ -25,7 +25,7 @@ namespace POE_Claim_System.Controllers
         ClaimsContext _claimsContext;
 
         //static dictionary to hold rejection reasons
-        private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
+        //private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
 
         // Constructor injection for the claim service
         public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment,
@@ -47,6 +47,7 @@ namespace POE_Claim_System.Controllers
         }
 
         //method to get reason from the static dictionary
+        /*
         private string GetRejectionReason(int claimId)
         {
             //if the rejection reason exists in the static dictionary
@@ -56,6 +57,7 @@ namespace POE_Claim_System.Controllers
             }
             return null; //return null if no reason is found to prevent error because approved doesnt get a reason
         }
+        */
 
         public IActionResult Index()
         {
@@ -73,10 +75,19 @@ namespace POE_Claim_System.Controllers
             var claims = _claimService.GetAllClaimsForLecturer(userName);
 
             // Add rejection reasons to claims from the static dictionary
+            /*
             foreach (var claim in claims)
             {
                 claim.RejectionReason = GetRejectionReason(claim.Id);
             }
+            */
+
+            //add rejection reasons to claims
+            foreach (var claim in claims)
+            {
+                claim.RejectionReason = HttpContext.Session.GetString($"RejectionReason_{claim.Id}");
+            }
+
 
             //set convert claims to string
             HttpContext.Session.SetString("ClaimsData", JsonConvert.SerializeObject(claims));
@@ -108,109 +119,284 @@ namespace POE_Claim_System.Controllers
             document.Add(new Paragraph($"Date {DateTime.Now.ToString("dd MMM yyyy HH:mm")}", header));
             document.Add(new Paragraph($"Please see below a table view of all your claims submitted:", header));
 
+            //format
+            document.Add(new Paragraph(Environment.NewLine));
+
             //set columns and width
-            PdfPTable table = new PdfPTable(8);
-            table.HorizontalAlignment = 0;
-            table.WidthPercentage = 100;
+            PdfPTable appTable = new PdfPTable(8);
+            appTable.HorizontalAlignment = 0;
+            appTable.WidthPercentage = 100;
             float[] widths = new float[] { 20, 20, 10, 10, 10, 10, 10, 10 };
-            table.SetWidths(widths);
+            appTable.SetWidths(widths);
             PdfPCell cell = new PdfPCell();
             //course column
             cell.Phrase = new Phrase("Course Code", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
             //class column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Class Name", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
             //group column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Group", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
 
             //date column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Date Claimed", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
 
             //hours column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Hours", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
 
             //rate column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Rate", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
 
             //total column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Total", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
 
 
             //status column
             cell = new PdfPCell();
             cell.Phrase = new Phrase("Status", header);
-            table.AddCell(cell);
+            appTable.AddCell(cell);
+
+            var approvedClaims = claims.Where(c => c.StatusId == 2).ToList();
 
             //looking through data submitted in claim system
-            foreach (var claim in claims!)
+            foreach (var claim in approvedClaims)
             {
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.CourseCode, data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.CourseName, data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.ClassName, data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.DateClaimed.ToString("dd MMM yyyy"), data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.Rate.ToString(), data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
 
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.TotalFee.ToString(), data);
-                table.AddCell(cell);
+                appTable.AddCell(cell);
+
+                //get correct status based on StatusId
+                string statusText = claim.StatusId switch
+                {
+                    1 => "Pending",
+                    2 => "Approved",
+                    3 => "Rejected"
+                };
 
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.Status, data);
-                table.AddCell(cell);
+                cell.Phrase = new Phrase(statusText, data);
+                appTable.AddCell(cell);
+
             }
 
-            //add new cell to show total
-            cell = new PdfPCell();
-            cell.Colspan = 6;
-            cell.Phrase = new Phrase("TOTAL AMOUNT FOR CLAIMS", header);
-            table.AddCell(cell);
-
-            //sum up all claims
-            cell = new PdfPCell();
-            cell.Colspan = 2;
-            cell.Phrase = new Phrase(claims.Sum(x => x.TotalFee).ToString(), header);
-            table.AddCell(cell);
+            document.Add(new Paragraph("Approved Claims", header));
+            document.Add(appTable);
+            document.Add(new Paragraph($"Total Amount for Approved Claims: {approvedClaims.Sum(c => c.TotalFee):C}", header));
 
             //format
             document.Add(new Paragraph(Environment.NewLine));
-            //add table in document
-            document.Add(table);
+
+            //rejected claims in table
+            PdfPTable rejectedTable = new PdfPTable(8);
+            rejectedTable.HorizontalAlignment = 0;
+            rejectedTable.WidthPercentage = 100;
+            rejectedTable.SetWidths(widths);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Course Code", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Class Name", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase(" Group", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Date Claimed", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Hours", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Rate", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Total", header);
+            rejectedTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Status", header);
+            rejectedTable.AddCell(cell);
+
+            var rejectedClaims = claims.Where(c => c.StatusId == 3).ToList();
+            foreach (var claim in rejectedClaims)
+            {
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.CourseCode, data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.CourseName, data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.ClassName, data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.DateClaimed.ToString("dd MMM yyyy"), data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.Rate.ToString(), data);
+                rejectedTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.TotalFee.ToString(), data);
+                rejectedTable.AddCell(cell);
+
+                string statusText = claim.StatusId switch
+                {
+                    1 => "Pending",
+                    2 => "Approved",
+                    3 => "Rejected"
+                };
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(statusText, data);
+                rejectedTable.AddCell(cell);
+            }
+
+            document.Add(new Paragraph("Rejected Claims", header));
+            document.Add(rejectedTable);
+
+            //format
+            document.Add(new Paragraph(Environment.NewLine));
+
+            //pending claims in table
+            PdfPTable pendingTable = new PdfPTable(8);
+            pendingTable.HorizontalAlignment = 0;
+            pendingTable.WidthPercentage = 100;
+            pendingTable.SetWidths(widths);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Course Code", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Class Name", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Group", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Date Claimed", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Hours", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Rate", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Total", header);
+            pendingTable.AddCell(cell);
+
+            cell = new PdfPCell();
+            cell.Phrase = new Phrase("Status", header);
+            pendingTable.AddCell(cell);
+
+            var pendingClaims = claims.Where(c => c.StatusId == 1).ToList();
+            foreach (var claim in pendingClaims)
+            {
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.CourseCode, data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.CourseName, data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.ClassName, data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.DateClaimed.ToString("dd MMM yyyy"), data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.Rate.ToString(), data);
+                pendingTable.AddCell(cell);
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(claim.TotalFee.ToString(), data);
+                pendingTable.AddCell(cell);
+
+                string statusText = claim.StatusId switch
+                {
+                    1 => "Pending",
+                    2 => "Approved",
+                    3 => "Rejected"
+                };
+
+                cell = new PdfPCell();
+                cell.Phrase = new Phrase(statusText, data);
+                pendingTable.AddCell(cell);
+            }
+
+            document.Add(new Paragraph("Pending Claims", header));
+            document.Add(pendingTable);
 
             //close files to avoid error
             document.Close();
@@ -297,7 +483,7 @@ namespace POE_Claim_System.Controllers
             return View(model);
         }
 
-        // Edit Claim GET method
+        //edit claim by GET method
         [HttpGet]
         public IActionResult Edit(int id)
         {
@@ -322,33 +508,33 @@ namespace POE_Claim_System.Controllers
             }
 
             // Populate the dropdowns for courses and classes
-            //claim.Courses = new SelectList(_claimsContext.Courses.ToList(), "Id", "Name", claim.CourseId);
-            //claim.Classes = new SelectList(_claimsContext.Classes.ToList(), "Id", "ClassName", claim.ClassId);
+            claim.Courses = new SelectList(_claimsContext.Courses.ToList(), "Id", "Name", claim.CourseId);
+            claim.Classes = new SelectList(_claimsContext.Classes.ToList(), "Id", "ClassName", claim.ClassId);
 
             return View(claim);
         }
 
-        // Edit Claim POST method
+        //edit claim by POST method
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Edit(ClaimViewModel model)
         {
             if (ModelState.IsValid)
             {
-                // Map the ClaimViewModel back to the Claim entity
+                //get the existing claim
                 var claim = await _claimsContext.Claims.FindAsync(model.Id);
                 if (claim == null)
                 {
-                    return NotFound(); // Return a 404 if the claim is not found
+                    return NotFound(); //if not found return error
                 }
 
-                // Update the claim properties
+                //update the claim information
                 claim.ClassId = model.ClassId;
                 claim.CourseId = model.CourseId;
                 claim.TotalHours = model.TotalHours;
                 claim.AdditionalNotes = model.AdditionalNotes;
 
-                // Calculate the total fee based on the updated hours and rate
+                //calculate the total fee based on the updated hours and rate
                 var rate = await _claimsContext.Rates.FirstOrDefaultAsync();
                 if (rate != null)
                 {
@@ -356,17 +542,60 @@ namespace POE_Claim_System.Controllers
                     claim.TotalFee = claim.TotalHours * claim.Rate;
                 }
 
-                // Save changes to the database
+                //save changes to the database
                 await _claimsContext.SaveChangesAsync();
-
-                // Redirect to the index or another appropriate action
-                return RedirectToAction("Index");
+                return RedirectToAction("Index"); //redirect to the index page after saving
             }
 
-            // If the model state is invalid, repopulate the dropdowns and return the view
-            //model.Courses = new SelectList(_claimsContext.Courses.ToList(), "Id", "Name", model.CourseId);
-            //model.Classes = new SelectList(_claimsContext.Classes.ToList(), "Id", "ClassName", model.ClassId);
+            //redisplay form
             return View(model);
+        }
+
+        //delete by Get method
+        [HttpGet]
+        public IActionResult Delete(int id)
+        {
+            //get claim from the database by id
+            var claim = _claimsContext.Claims
+            .Where(c => c.Id == id)
+            .Select(c => new ClaimViewModel
+            {
+                Id = c.Id,
+                CourseId = c.CourseId,
+                CourseName = c.Course.Name,
+                ClassId = c.ClassId,
+                TotalHours = c.TotalHours,
+                Rate = c.Rate,
+                TotalFee = c.TotalFee,
+                DateClaimed = c.DateClaimed,
+                AdditionalNotes = c.AdditionalNotes,
+                StatusId = c.StatusId
+            })
+            .FirstOrDefault();
+
+            if (claim == null)
+            {
+                return NotFound(); //return not found
+            }
+
+            return View(claim);
+        }
+
+        //delete by POST method
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> ConfirmDelete(int id)
+        {
+            var claim = await _claimsContext.Claims.FindAsync(id);
+            if (claim != null)
+            {
+                //remove the claim from the context
+                _claimsContext.Claims.Remove(claim);
+                await _claimsContext.SaveChangesAsync(); //then save changes to the database
+            }
+
+            //redirect to the index after deletion
+            return RedirectToAction("Index");
         }
 
 

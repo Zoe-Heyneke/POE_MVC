@@ -23,7 +23,7 @@ namespace POE_Claim_System.Controllers
         private readonly string _uploadFolderPath;
 
         //static dictionary to hold rejection reasons
-        private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
+        //private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
 
         public CoordinatorManagerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment)
         {
@@ -69,8 +69,11 @@ namespace POE_Claim_System.Controllers
             _claimService.UpdateClaimStatus(claimId, "Rejected");
             //_claimService.RejectClaim(claimId, rejectReason);
 
-            // Store the rejection reason in the dictionary
-            _rejectionReasons[claimId] = rejectionReason;
+            //store the rejection reason in the dictionary
+            //_rejectionReasons[claimId] = rejectionReason;
+
+            //store the rejection reason in session
+            HttpContext.Session.SetString($"RejectionReason_{claimId}", rejectionReason);
 
             return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
@@ -111,7 +114,7 @@ namespace POE_Claim_System.Controllers
             var groupedClaims = appClaims.GroupBy(c => new { c.LectureFirstName, c.LectureLastName });
             foreach (var group in groupedClaims)
             {
-                // Add lecturer name as a sub-header
+                //each lecturer name
                 document.Add(new Paragraph($"{group.Key.LectureFirstName} {group.Key.LectureLastName}'s Claims", FontFactory.GetFont("Serif", 12, Font.BOLD, BaseColor.BLACK)));
 
                 //set columns and width

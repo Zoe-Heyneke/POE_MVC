@@ -1,4 +1,6 @@
-﻿namespace POE_Claim_System.Models;
+﻿using Microsoft.AspNetCore.Mvc.Rendering;
+
+namespace POE_Claim_System.Models;
 
 public class ClaimViewModel
 {
@@ -21,4 +23,9 @@ public class ClaimViewModel
     public string LectureLastName { get; set; }
     //public string RejectReason { get; set; }
     public string? RejectionReason { get; set; }
+
+    //properties to hold the list of courses and classes for edit
+    public IEnumerable<SelectListItem> Courses { get; set; }
+    public IEnumerable<SelectListItem> Classes { get; set; }
+
 }

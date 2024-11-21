@@ -1,0 +1,28 @@
+﻿@model POE_Claim_System.Models.ClaimViewModel
+
+@{
+    ViewData["Title"] = "Delete Claim";
+}
+
+<h2 style="background-color:rosybrown; text-align:center;">Delete Claim</h2>
+
+<div style="text-align:center;">
+    <h4>Confirm the deletion of this claim:</h4>
+    <div>
+        <strong>Course Code:</strong> @Model.CourseCode <br />
+        <strong>Course Name:</strong> @Model.CourseName <br />
+        <strong>Class Name:</strong> @Model.ClassName <br />
+        <strong>Date Claimed:</strong> @Model.DateClaimed.ToString("dd MMM yyyy") <br />
+        <strong>Total Hours:</strong> @Model.TotalHours <br />
+        <strong>Total Fee:</strong> @String.Format("{0:C}", Model.TotalFee) <br />
+        <strong>Notes:</strong> @Model.AdditionalNotes <br />
+    </div>
+</div>
+
+<div style="text-align:center;">
+<form asp-action="ConfirmDelete method="post">
+    <input type="hidden" name="id" value="@Model.Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+</div>
