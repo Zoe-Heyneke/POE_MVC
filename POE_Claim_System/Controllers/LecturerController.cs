@@ -12,6 +12,7 @@ using System.Reflection.PortableExecutable;
 using static iTextSharp.text.pdf.AcroFields;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.EntityFrameworkCore;
 
 
 namespace POE_Claim_System.Controllers
@@ -22,6 +23,9 @@ namespace POE_Claim_System.Controllers
         private readonly string _uploadFolderPath;
 
         ClaimsContext _claimsContext;
+
+        //static dictionary to hold rejection reasons
+        private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
 
         // Constructor injection for the claim service
         public LecturerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment,
@@ -42,6 +46,17 @@ namespace POE_Claim_System.Controllers
             }
         }
 
+        //method to get reason from the static dictionary
+        private string GetRejectionReason(int claimId)
+        {
+            //if the rejection reason exists in the static dictionary
+            if (_rejectionReasons.TryGetValue(claimId, out var rejectionReason))
+            {
+                return rejectionReason;
+            }
+            return null; //return null if no reason is found to prevent error because approved doesnt get a reason
+        }
+
         public IActionResult Index()
         {
             //fetch username from session
@@ -56,6 +71,13 @@ namespace POE_Claim_System.Controllers
 
             //fetch claims for lecturer using the valid username
             var claims = _claimService.GetAllClaimsForLecturer(userName);
+
+            // Add rejection reasons to claims from the static dictionary
+            foreach (var claim in claims)
+            {
+                claim.RejectionReason = GetRejectionReason(claim.Id);
+            }
+
             //set convert claims to string
             HttpContext.Session.SetString("ClaimsData", JsonConvert.SerializeObject(claims));
             return View(claims);
@@ -159,6 +181,7 @@ namespace POE_Claim_System.Controllers
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
                 table.AddCell(cell);
+
                 cell = new PdfPCell();
                 cell.Phrase = new Phrase(claim.Rate.ToString(), data);
                 table.AddCell(cell);
@@ -273,6 +296,80 @@ namespace POE_Claim_System.Controllers
             // If there is an issue with the submission, return to the form 
             return View(model);
         }
+
+        // Edit Claim GET method
+        [HttpGet]
+        public IActionResult Edit(int id)
+        {
+            // Retrieve the claim from the database
+            var claim = _claimsContext.Claims
+                .Where(c => c.Id == id)
+                .Select(c => new ClaimViewModel
+                {
+                    Id = c.Id,
+                    ClassId = c.ClassId,
+                    CourseId = c.CourseId,
+                    TotalHours = c.TotalHours,
+                    AdditionalNotes = c.AdditionalNotes,
+                    Rate = c.Rate,
+                    TotalFee = c.TotalFee,
+                })
+                .FirstOrDefault();
+
+            if (claim == null)
+            {
+                return NotFound(); // Return a 404 if the claim is not found
+            }
+
+            // Populate the dropdowns for courses and classes
+            //claim.Courses = new SelectList(_claimsContext.Courses.ToList(), "Id", "Name", claim.CourseId);
+            //claim.Classes = new SelectList(_claimsContext.Classes.ToList(), "Id", "ClassName", claim.ClassId);
+
+            return View(claim);
+        }
+
+        // Edit Claim POST method
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Edit(ClaimViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                // Map the ClaimViewModel back to the Claim entity
+                var claim = await _claimsContext.Claims.FindAsync(model.Id);
+                if (claim == null)
+                {
+                    return NotFound(); // Return a 404 if the claim is not found
+                }
+
+                // Update the claim properties
+                claim.ClassId = model.ClassId;
+                claim.CourseId = model.CourseId;
+                claim.TotalHours = model.TotalHours;
+                claim.AdditionalNotes = model.AdditionalNotes;
+
+                // Calculate the total fee based on the updated hours and rate
+                var rate = await _claimsContext.Rates.FirstOrDefaultAsync();
+                if (rate != null)
+                {
+                    claim.Rate = rate.HourlyRate;
+                    claim.TotalFee = claim.TotalHours * claim.Rate;
+                }
+
+                // Save changes to the database
+                await _claimsContext.SaveChangesAsync();
+
+                // Redirect to the index or another appropriate action
+                return RedirectToAction("Index");
+            }
+
+            // If the model state is invalid, repopulate the dropdowns and return the view
+            //model.Courses = new SelectList(_claimsContext.Courses.ToList(), "Id", "Name", model.CourseId);
+            //model.Classes = new SelectList(_claimsContext.Classes.ToList(), "Id", "ClassName", model.ClassId);
+            return View(model);
+        }
+
+
 
         //insert track directory to view status
 

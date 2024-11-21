@@ -47,8 +47,10 @@
                                 <input type="hidden" name="ClaimId" value="@claim.Id" />
                                 <button type="submit" class="btn" style="background-color: seagreen; color: white;">Approve</button>
                             </form>
-                            <form asp-action="RejectClaim" asp-controller="CoordinatorManager" method="post" style="display: inline-block;">
-                                <input type="hidden" name="ClaimId" value="@claim.Id" />
+                            <form asp-action="RejectClaim" method="post">
+                                <input type="hidden" name="claimId" value="@claim.Id" />
+                                <label for="rejectionReason">Rejection Reason:</label>
+                                <input type="text" name="rejectionReason" required />
                                 <button type="submit" class="btn" style="background-color: chocolate; color: white;">Reject</button>
                             </form>
                         </td>

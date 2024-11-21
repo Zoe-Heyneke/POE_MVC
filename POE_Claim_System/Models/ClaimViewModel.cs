@@ -20,4 +20,5 @@ public class ClaimViewModel
     public string LectureFirstName { get; set; }
     public string LectureLastName { get; set; }
     //public string RejectReason { get; set; }
+    public string? RejectionReason { get; set; }
 }

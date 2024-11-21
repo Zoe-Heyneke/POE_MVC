@@ -38,6 +38,7 @@
                 <th>Notes</th>
                 <th>Document</th>
                 <th>Status</th>
+                <th>Rejection Reason</th>
                 <th>Actions</th>
             </tr>
         </thead>
@@ -76,9 +77,9 @@
                         else if (claim.StatusId == 3)
                         {
                             <span class="badge bg-danger">Rejected</span>
-                            
                         }
                     </td>
+                    <td>@claim.RejectionReason</td>
                     <td>
                         @if (claim.StatusId == 1) //show actions for pending status
                         {

@@ -22,6 +22,9 @@ namespace POE_Claim_System.Controllers
         private readonly ClaimService _claimService;
         private readonly string _uploadFolderPath;
 
+        //static dictionary to hold rejection reasons
+        private static readonly Dictionary<int, string> _rejectionReasons = new Dictionary<int, string>();
+
         public CoordinatorManagerController(ClaimService claimService, IWebHostEnvironment webHostEnvironment)
         {
             _claimService = claimService;
@@ -60,10 +63,15 @@ namespace POE_Claim_System.Controllers
 
         //reject a claim
         [HttpPost]
-        public IActionResult RejectClaim(int claimId)
+        public IActionResult RejectClaim(int claimId, string rejectionReason)
         {
+            //update claim to rejected
             _claimService.UpdateClaimStatus(claimId, "Rejected");
             //_claimService.RejectClaim(claimId, rejectReason);
+
+            // Store the rejection reason in the dictionary
+            _rejectionReasons[claimId] = rejectionReason;
+
             return RedirectToAction("Index"); // Redirect back to the pending claims list
         }
 
@@ -99,122 +107,132 @@ namespace POE_Claim_System.Controllers
             document.Add(new Paragraph($"Date {DateTime.Now.ToString("dd MMM yyyy HH:mm")}", header));
             document.Add(new Paragraph($"Please see below a report of all approved claims valid for invoice capturing:", header));
 
-            //set columns and width
-            PdfPTable table = new PdfPTable(10);
-            table.HorizontalAlignment = 0;
-            table.WidthPercentage = 100;
-            float[] widths = new float[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
-            table.SetWidths(widths);
-            PdfPCell cell = new PdfPCell();
-            //id column
-            cell.Phrase = new Phrase("ID", header);
-            table.AddCell(cell);
-
-            //code column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Course Code", header);
-            table.AddCell(cell);
-
-            //class column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Class Name", header);
-            table.AddCell(cell);
-
-            //group column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Group", header);
-            table.AddCell(cell);
-
-            //date column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Date Claimed", header);
-            table.AddCell(cell);
-
-            //lecturer first name column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Lecturer FirstName", header);
-            table.AddCell(cell);
-
-            //lecturer last name column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Lecturer LastName", header);
-            table.AddCell(cell);          
-
-            //hours column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Hours", header);
-            table.AddCell(cell);
-
-            //rate column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Rate", header);
-            table.AddCell(cell);
-
-            //total column
-            cell = new PdfPCell();
-            cell.Phrase = new Phrase("Total", header);
-            table.AddCell(cell);
-
-            //looking through data submitted in claim system
-            foreach (var claim in appClaims!)
+            //group claims by each lecturer
+            var groupedClaims = appClaims.GroupBy(c => new { c.LectureFirstName, c.LectureLastName });
+            foreach (var group in groupedClaims)
             {
-                cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.Id.ToString(), data);
+                // Add lecturer name as a sub-header
+                document.Add(new Paragraph($"{group.Key.LectureFirstName} {group.Key.LectureLastName}'s Claims", FontFactory.GetFont("Serif", 12, Font.BOLD, BaseColor.BLACK)));
+
+                //set columns and width
+                PdfPTable table = new PdfPTable(10);
+                table.HorizontalAlignment = 0;
+                table.WidthPercentage = 100;
+                float[] widths = new float[] { 10, 10, 10, 10, 10, 10, 10, 10, 10, 10 };
+                table.SetWidths(widths);
+                PdfPCell cell = new PdfPCell();
+                //id column
+                cell.Phrase = new Phrase("ID", header);
                 table.AddCell(cell);
 
+                //code column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.CourseCode, data);
+                cell.Phrase = new Phrase("Course Code", header);
                 table.AddCell(cell);
 
+                //class column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.CourseName, data);
+                cell.Phrase = new Phrase("Class Name", header);
                 table.AddCell(cell);
 
+                //group column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.ClassName, data);
+                cell.Phrase = new Phrase("Group", header);
                 table.AddCell(cell);
 
+                //date column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.DateClaimed.ToString("dd MMM yyyy"), data);
+                cell.Phrase = new Phrase("Date Claimed", header);
                 table.AddCell(cell);
 
+                //lecturer first name column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.LectureFirstName, data);
+                cell.Phrase = new Phrase("Lecturer FirstName", header);
                 table.AddCell(cell);
 
+                //lecturer last name column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.LectureLastName, data);
+                cell.Phrase = new Phrase("Lecturer LastName", header);
                 table.AddCell(cell);
 
+                //hours column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
+                cell.Phrase = new Phrase("Hours", header);
                 table.AddCell(cell);
 
+                //rate column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.Rate.ToString(), data);
+                cell.Phrase = new Phrase("Rate", header);
                 table.AddCell(cell);
 
+                //total column
                 cell = new PdfPCell();
-                cell.Phrase = new Phrase(claim.TotalFee.ToString(), data);
+                cell.Phrase = new Phrase("Total", header);
                 table.AddCell(cell);
+
+
+                //looking through data submitted in claim system
+                foreach (var claim in group)
+                {
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.Id.ToString(), data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.CourseCode, data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.CourseName, data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.ClassName, data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.DateClaimed.ToString("dd MMM yyyy"), data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.LectureFirstName, data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.LectureLastName, data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.TotalHours.ToString(), data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.Rate.ToString(), data);
+                    table.AddCell(cell);
+
+                    cell = new PdfPCell();
+                    cell.Phrase = new Phrase(claim.TotalFee.ToString(), data);
+                    table.AddCell(cell);
+
+                }
+
+                //add new cell to show total
+                cell = new PdfPCell();
+                cell.Colspan = 7;
+                cell.Phrase = new Phrase("TOTAL AMOUNT FOR CLAIMS", header);
+                table.AddCell(cell);
+
+                //sum up all claims
+                cell = new PdfPCell();
+                cell.Colspan = 3;
+                cell.Phrase = new Phrase(group.Sum(x => x.TotalFee).ToString(), header);
+                table.AddCell(cell);
+
+                //format add space
+                document.Add(new Paragraph(Environment.NewLine));
+                //add table in document
+                document.Add(table);
             }
-
-            //add new cell to show total
-            cell = new PdfPCell();
-            cell.Colspan = 7;
-            cell.Phrase = new Phrase("TOTAL AMOUNT FOR CLAIMS", header);
-            table.AddCell(cell);
-
-            //sum up all claims
-            cell = new PdfPCell();
-            cell.Colspan = 3;
-            cell.Phrase = new Phrase(appClaims.Sum(x => x.TotalFee).ToString(), header);
-            table.AddCell(cell);
-
-            //format add space
-            document.Add(new Paragraph(Environment.NewLine));
-            //add table in document
-            document.Add(table);
 
             //summary at end
             document.Add(new Paragraph(Environment.NewLine)); //add space 
