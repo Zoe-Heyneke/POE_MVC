@@ -7,6 +7,8 @@ Packages Required
 
     Install MySql.EntityFrameworkCore using Nuget Package Installer
     Install Microsoft.EntityFrameworkCore.InMemory using Nuget Package Installer
+    Install SQLite Database for storing database
+    Install iTextSharp for PDF report download
 
 Change the OnConfiguration settings of the context to be like this
 
