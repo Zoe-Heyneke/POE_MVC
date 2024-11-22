@@ -25,6 +25,7 @@
                         <select class="form-select form-select-solid" data-control="select2" asp-for="CourseId" asp-items="Model.Courses" data-hide-search="false" required>
                             <option value="0">Please select</option>
                         </select>
+                        <span asp-validation-for="CourseId" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="col-md-6">
@@ -33,6 +34,7 @@
                         <select class="form-select form-select-solid" data-control="select2" asp-for="ClassId" asp-items="Model.Classes" data-hide-search="false" required>
                             <option value="0">Please select</option>
                         </select>
+                        <span asp-validation-for="ClassId" class="text-danger"></span>
                     </div>
                 </div>
             </div>
@@ -58,6 +60,7 @@
             <div class="form-group">
                 <label for="uploadDocument">Choose a Document to Upload:</label>
                 <input asp-for="Document" type="file" class="form-control-file" />
+                <span asp-validation-for="Document" class="text-danger"></span>
             </div>
         </div>
 
@@ -67,6 +70,7 @@
             <div class="form-group">
                 <label for="additionalNotes">Additional Notes:</label>
                 <input asp-for="AdditionalNotes" id="additionalNotes" name="additionalNotes" class="form-control" placeholder="Add any notes" />
+                <span asp-validation-for="AdditionalNotes" class="text-danger"></span>
             </div>
         </div>
 
