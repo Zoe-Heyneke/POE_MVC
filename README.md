@@ -7,6 +7,7 @@ Packages Required
 
     Install MySql.EntityFrameworkCore using Nuget Package Installer
     Install Microsoft.EntityFrameworkCore.InMemory using Nuget Package Installer
+    Install SQLite Database
 
 Change the OnConfiguration settings of the context to be like this
 
